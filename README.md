@@ -8,4 +8,5 @@ This repo holds small demo pages. Each one is a single HTML file, published with
 | --- | --- |
 | Beach Volley Broadcast | [Open](https://giorgos-terzoglou.github.io/demos/) |
 | Fitting room | [Open](https://giorgos-terzoglou.github.io/demos/index_clothes.html) |
+| final form beach volley | [Open](https://giorgos-terzoglou.github.io/demos/beach-volley-final.html) |
 
