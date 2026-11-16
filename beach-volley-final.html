@@ -1,0 +1,1490 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beach Volley Hub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: dark preview bar, white sidebar app shell, content column; scores use a navy scoreboard surface. */
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --surface-2:#F1F2F5; --fg:#0B0D12; --fg-2:#3D414A; --muted:#626772; --line:#E6E7EB; --line-2:#EFF0F3;
+  --accent:#2F6FEB; --accent-hover:#2259C9; --accent-soft:#EBF1FE; --accent-ink:#1E4FB8; --on-accent:#FFFFFF;
+  --sun:#F5B400; --sun-soft:#FFF4D6; --sun-ink:#7A5600;
+  --teal:#0E8A7E; --teal-soft:#E2F4F1; --violet:#6E56CF; --violet-soft:#EFEBFC;
+  --bronze:#9A5420; --bronze-soft:#F6E6D8; --good:#16884F; --good-soft:#E6F5EC; --warn:#A06000; --warn-soft:#FFF1DC; --bad:#C23B32; --bad-soft:#FCE9E7;
+  --board:#0B1A3A; --board-2:#13285A; --board-3:#1C3470; --board-fg:#FFFFFF; --board-muted:#A9B6D3; --cyan:#19C3FF;
+  --scrim:rgba(8,12,20,.5); --shadow:0 1px 2px rgba(11,13,18,.05),0 8px 24px rgba(11,13,18,.06);
+  --f-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-display:"Inter Tight",Inter,system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B0D12; --surface:#12151C; --surface-2:#1A1E27; --fg:#ECEEF2; --fg-2:#C3C7D0; --muted:#8D93A0; --line:#252A35; --line-2:#1E222C;
+  --accent:#5B8DEF; --accent-hover:#79A2F3; --accent-soft:#16233F; --accent-ink:#9DBBF6; --on-accent:#06101F;
+  --sun:#F5C342; --sun-soft:#33290F; --sun-ink:#F7D57E; --teal:#3CC2B2; --teal-soft:#0F2C29; --violet:#A390F0; --violet-soft:#231D3D;
+  --bronze:#E0A374; --bronze-soft:#33210F; --good:#43C181; --good-soft:#0F2A1C; --warn:#E9A84B; --warn-soft:#33240E; --bad:#EE776D; --bad-soft:#36191A;
+  --board:#0E1D40; --board-2:#16295A; --board-3:#1F3672; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0B0D12; --surface:#12151C; --surface-2:#1A1E27; --fg:#ECEEF2; --fg-2:#C3C7D0; --muted:#8D93A0; --line:#252A35; --line-2:#1E222C;
+  --accent:#5B8DEF; --accent-hover:#79A2F3; --accent-soft:#16233F; --accent-ink:#9DBBF6; --on-accent:#06101F;
+  --sun:#F5C342; --sun-soft:#33290F; --sun-ink:#F7D57E; --teal:#3CC2B2; --teal-soft:#0F2C29; --violet:#A390F0; --violet-soft:#231D3D;
+  --bronze:#E0A374; --bronze-soft:#33210F; --good:#43C181; --good-soft:#0F2A1C; --warn:#E9A84B; --warn-soft:#33240E; --bad:#EE776D; --bad-soft:#36191A;
+  --board:#0E1D40; --board-2:#16295A; --board-3:#1F3672; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:14px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--board)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+
+/* Preview bar */
+.pbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--board);color:var(--board-fg)}
+.pbar-in{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;min-height:46px;padding-block:6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ptag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--sun);color:#1E1600;padding:3px 8px;border-radius:5px}
+.plabel{font-size:13px;color:var(--board-muted)}
+.roles{display:flex;gap:4px;overflow-x:auto;max-width:100%}
+.roles button{border:0;background:transparent;color:var(--board-muted);font-weight:600;font-size:13px;padding:5px 12px;border-radius:7px;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.roles button:hover{color:var(--board-fg);background:var(--board-2)}
+.roles button[aria-pressed="true"]{background:var(--board-fg);color:var(--board)}
+.roles i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* App shell */
+.app{display:flex;align-items:flex-start}
+.side{width:244px;flex:none;position:sticky;top:calc(46px + env(safe-area-inset-top,0px));height:calc(100vh - 46px - env(safe-area-inset-top,0px));background:var(--surface);border-right:1px solid var(--line);padding:18px 12px 14px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px}
+.logo{width:30px;height:30px;border-radius:8px;background:var(--board);display:grid;place-items:center;flex:none}
+.brand b{display:block;font-weight:700;line-height:1.2}
+.brand small{display:block;font-size:12px;color:var(--muted);line-height:1.2}
+.nav{display:flex;flex-direction:column;gap:2px}
+.navi{border:0;background:transparent;color:var(--fg-2);display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;text-align:left;font-weight:500;white-space:nowrap}
+.navi svg{color:var(--muted);flex:none}
+.navi:hover{background:var(--surface-2)}
+.navi[aria-current="page"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.navi[aria-current="page"] svg{color:var(--accent)}
+.navi span{flex:1}
+.badge{min-width:18px;height:18px;padding:0 6px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:inline-grid;place-items:center}
+.whocard{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.whocard .t{min-width:0;line-height:1.25}
+.whocard .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.whocard .t small{font-size:12px;color:var(--muted)}
+.whocard{flex-wrap:wrap}
+.whobtn{width:100%;justify-content:center}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.av.blue{background:var(--accent-soft);color:var(--accent-ink)}
+.av.teal{background:var(--teal-soft);color:var(--teal)}
+.av.violet{background:var(--violet-soft);color:var(--violet)}
+.av.sun{background:var(--sun-soft);color:var(--sun-ink)}
+.av.gray{background:var(--surface-2);color:var(--muted)}
+.content{flex:1;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--surface)}
+.crumb{font-size:13px;color:var(--muted)}
+.crumb b{color:var(--fg);font-weight:500}
+.crumb i{font-style:normal;color:var(--line);margin:0 6px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:260px;color:var(--muted);background:var(--surface)}
+.search input{border:0;outline:0;background:transparent;flex:1;min-width:0;font-size:13px}
+.kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 5px}
+main{max-width:1080px;padding-block:28px 72px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+@media (max-width:900px){
+  .app{flex-direction:column;align-items:stretch}
+  .side{position:static;width:auto;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 12px;border-right:0;border-bottom:1px solid var(--line);padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .brand{padding:0;margin-right:auto}
+  .whocard{margin:0;border:0;padding:0}
+  .whocard .t{display:none}
+  .whobtn{width:auto}
+  .topbar{display:none}
+  main{padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+}
+
+/* Page furniture */
+.roleline{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--fg-2);border-radius:10px;padding:9px 14px;margin-bottom:22px;background:var(--surface);border:1px solid var(--line)}
+.roleline .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:20px}
+h1.page{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:-.02em;line-height:1.15;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0}
+.eyebrow{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+h2.sec{font-size:15px;font-weight:600;margin:28px 0 10px;display:flex;align-items:center;gap:8px}
+h2.sec .count{font-weight:500;color:var(--muted)}
+
+/* Controls */
+.btn{border:1px solid transparent;background:var(--accent);color:var(--on-accent);font-weight:600;padding:8px 14px;border-radius:8px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;line-height:1.25}
+.btn:hover{background:var(--accent-hover)}
+.btn.ghost{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.quiet{background:transparent;color:var(--accent);padding-inline:6px}
+.btn.quiet:hover{background:var(--accent-soft)}
+.btn.danger{background:var(--surface);color:var(--bad);border-color:var(--line)}
+.btn.danger:hover{background:var(--bad-soft)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:7px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn[disabled]:hover{background:var(--accent)}
+.btn.ghost[disabled]:hover{background:var(--surface)}
+.seg{display:inline-flex;gap:2px;padding:3px;background:var(--surface-2);border-radius:8px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--muted);font-weight:500;padding:5px 12px;border-radius:6px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(11,13,18,.1)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.plain::before{display:none}
+.chip.good{background:var(--good-soft);color:var(--good)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.info{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.sun{background:var(--sun-soft);color:var(--sun-ink)}
+.chip.teal{background:var(--teal-soft);color:var(--teal)}
+.chip.violet{background:var(--violet-soft);color:var(--violet)}
+.tag{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent-ink)}
+.tag.finals{background:var(--sun-soft);color:var(--sun-ink)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Surfaces */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.pad{padding:16px 18px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:1100px){.two{grid-template-columns:minmax(0,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:18px}
+.stats>div{padding:16px 18px;display:flex;gap:12px;align-items:flex-start;min-width:0}
+.stats>div+div{border-left:1px solid var(--line)}
+@media (max-width:640px){.stats{grid-template-columns:minmax(0,1fr)}.stats>div+div{border-left:0;border-top:1px solid var(--line)}}
+.ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none}
+.ico.blue{background:var(--accent-soft);color:var(--accent)}
+.ico.teal{background:var(--teal-soft);color:var(--teal)}
+.ico.violet{background:var(--violet-soft);color:var(--violet)}
+.ico.sun{background:var(--sun-soft);color:var(--sun-ink)}
+.stat small{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat em{font-style:normal;font-size:12.5px;color:var(--good)}
+.callout{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));background:var(--accent-soft);margin-bottom:12px}
+.callout .t{flex:1;min-width:220px}
+.callout .t b{display:block}
+.callout .t span{font-size:13px;color:var(--fg-2)}
+
+/* Result cards */
+.tcard{display:flex;flex-direction:column;gap:8px;padding:16px 18px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;transition:border-color .15s,box-shadow .15s}
+.tcard:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.tcard h3{font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:-.01em;margin:2px 0 0}
+.tcard .meta{font-size:13px;color:var(--muted)}
+.coef{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.winners{margin-top:6px;border-top:1px solid var(--line-2);padding-top:10px;display:grid;gap:6px;font-size:13.5px}
+.winners div{display:flex;align-items:center;gap:8px;min-width:0}
+.winners svg{color:var(--sun);flex:none}
+.winners span{color:var(--muted);width:68px;flex:none}
+.winners b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Tables */
+.tscroll{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;font-weight:500;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .r{text-align:right}
+.tbl.fixed{table-layout:fixed;min-width:560px}
+.place{font-family:var(--f-display);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;width:64px}
+.place small{display:block;font-family:var(--f-ui);font-weight:500;font-size:11px;color:var(--muted);line-height:1}
+.medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-size:14px}
+.medal.g{background:var(--sun-soft);color:var(--sun-ink)}
+.medal.s{background:var(--surface-2);color:var(--fg-2)}
+.medal.b{background:var(--bronze-soft);color:var(--bronze)}
+.team b{font-weight:600}
+.team small{display:block;color:var(--muted);font-size:12.5px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:600}
+.panel-h span{font-weight:400;color:var(--muted);font-size:13px}
+
+/* Scoreboard */
+.board{background:var(--board);color:var(--board-fg);border-radius:12px;overflow:hidden}
+.board-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-weight:600;border-bottom:1px solid var(--board-2)}
+.board-h span{color:var(--board-muted);font-weight:500;font-size:13px}
+.bm{padding:10px 16px 12px;border-bottom:1px solid var(--board-2)}
+.bm:last-child{border-bottom:0}
+.bm-lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.bm-row{display:grid;grid-template-columns:minmax(0,1fr) auto 28px;gap:12px;align-items:center;padding:3px 0;color:var(--board-muted)}
+.bm-row.win{color:var(--board-fg);font-weight:600}
+.bm-tn{overflow-wrap:anywhere}
+.bm-sets{display:flex;gap:6px;font-family:var(--f-mono);font-size:13px}
+.bm-sets span{min-width:22px;text-align:right}
+.bm-sets span.w{color:var(--board-fg);font-weight:600}
+.bm-tot{font-family:var(--f-display);font-weight:800;font-size:20px;text-align:center;border-radius:6px;line-height:28px}
+.bm-row.win .bm-tot{background:var(--cyan);color:var(--board)}
+.bm-row:not(.win) .bm-tot{background:var(--board-2)}
+
+/* Athlete list */
+.trow{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 18px}
+.trow+.trow{border-top:1px solid var(--line-2)}
+.datebox{border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);text-align:center;padding:8px 4px;line-height:1}
+.datebox.finals{background:var(--sun-soft);color:var(--sun-ink)}
+.datebox b{display:block;font-family:var(--f-display);font-size:24px;font-weight:800}
+.datebox span{font-size:11px;font-weight:700;letter-spacing:.06em}
+.trow h3{margin:0;font-size:15px;font-weight:600}
+.trow .meta{font-size:13px;color:var(--muted)}
+.trow .act{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:640px){.trow{grid-template-columns:52px minmax(0,1fr)}.trow .act{grid-column:1/-1;justify-content:flex-start}}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.step{font-size:12.5px;font-weight:500;padding:3px 10px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.step.done{border-color:transparent;background:var(--good-soft);color:var(--good)}
+.step.now{border-color:var(--accent);color:var(--accent-ink)}
+
+/* Schedule */
+.srow{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+.srow:last-child{border-bottom:0}
+.when b{display:block;font-family:var(--f-mono);font-size:15px;font-weight:600}
+.when span{font-size:12px;color:var(--muted)}
+.smeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.pending{display:grid;gap:2px}
+.pending .vs{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em}
+.mini{background:var(--board);border-radius:9px;padding:6px 10px;max-width:460px}
+.mini .bm-row{padding:2px 0;font-size:13.5px}
+.mini .bm-tot{font-size:16px;line-height:24px}
+@media (max-width:640px){.srow{grid-template-columns:minmax(0,1fr)}.when{display:flex;gap:8px;align-items:baseline}}
+.progress{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:8px;width:280px;max-width:100%}
+.progress i{display:block;height:100%;background:var(--good)}
+
+/* Overview */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.todo{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line-2)}
+.todo:last-child{border-bottom:0}
+.todo .txt{flex:1;min-width:0}
+.todo .txt b{display:block;font-weight:600}
+.todo .txt span{font-size:13px;color:var(--muted)}
+
+/* Entry list */
+.band{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:var(--surface-2);font-weight:600;font-size:13.5px;border-bottom:1px solid var(--line)}
+.band:not(:first-child){border-top:1px solid var(--line)}
+.band .l{display:flex;align-items:center;gap:8px}
+.band .l i{width:8px;height:8px;border-radius:50%}
+.band span{font-weight:400;color:var(--muted)}
+.banner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500}
+.banner.good{background:var(--good-soft);color:var(--good)}
+.banner.info{background:var(--accent-soft);color:var(--accent-ink)}
+.banner .grow{flex:1;min-width:200px}
+.formula{font-size:13px;color:var(--muted);margin:-8px 0 16px}
+
+/* Forms */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.field .lab{font-size:13px;font-weight:600}
+.hint{font-size:12.5px;color:var(--muted)}
+.input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);min-height:40px}
+.input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.fgrid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.fgrid .full{grid-column:1/-1}
+@media (max-width:560px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+.choice{display:flex;gap:8px;flex-wrap:wrap}
+.choice button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;text-align:left;font-weight:600;display:flex;flex-direction:column;gap:2px;min-width:140px}
+.choice button small{font-weight:400;color:var(--muted);font-size:12.5px}
+.choice button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent)}
+.check{display:flex;align-items:center;gap:8px;font-weight:500}
+.check input{width:17px;height:17px;accent-color:var(--accent)}
+.err{color:var(--bad);font-size:13px;font-weight:500}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:var(--scrim);z-index:70;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--surface);color:var(--fg);border-radius:14px;width:100%;max-width:560px;max-height:100%;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.modal.wide{max-width:660px}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:18px 20px 14px}
+.mhead h2{margin:0;font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.01em}
+.mhead p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.x{border:0;background:var(--surface-2);width:32px;height:32px;border-radius:8px;font-size:18px;line-height:1;flex:none;color:var(--fg-2)}
+.mbody{padding:4px 20px 18px;display:flex;flex-direction:column;gap:16px}
+.mfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--line);background:var(--surface)}
+.wsteps{display:flex;gap:6px;padding:0 20px 16px}
+.wsteps div{flex:1;font-size:12px;font-weight:600;color:var(--muted);border-top:3px solid var(--line);padding-top:6px}
+.wsteps div.on{color:var(--accent-ink);border-color:var(--accent)}
+.wsteps div.done{border-color:var(--good)}
+.plist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;max-height:290px;overflow:auto}
+.pitem{display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;border-bottom:1px solid var(--line-2);background:var(--surface);text-align:left;width:100%}
+.pitem:last-child{border-bottom:0}
+.pitem:hover{background:var(--surface-2)}
+.pitem[aria-pressed="true"]{background:var(--accent-soft)}
+.pitem[disabled]{cursor:not-allowed;opacity:.5;background:var(--surface)}
+.pitem .nm{flex:1;min-width:0;font-weight:500}
+.pitem .nm small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none}
+.pitem[aria-pressed="true"] .radio{border:6px solid var(--accent)}
+.summary{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:13.5px}
+.sgrid{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 64px;gap:8px 10px;align-items:center}
+.sgrid .h{font-size:11px;font-weight:600;color:var(--muted);text-align:center;letter-spacing:.06em}
+.sgrid .tn{font-weight:600;overflow-wrap:anywhere}
+.sgrid input{text-align:center;font-family:var(--f-mono);font-size:19px;font-weight:600;padding:6px;min-height:48px}
+.sgrid input.w{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+@media (max-width:480px){.sgrid{grid-template-columns:minmax(0,1fr) 52px 52px 52px}}
+.final{background:var(--board);color:var(--board-fg);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:16px}
+.final .big{font-family:var(--f-display);font-weight:800;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.final .big span{color:var(--board-muted)}
+.final .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--cyan)}
+.final.idle{background:var(--surface-2);color:var(--muted)}
+.final.bad{background:var(--bad-soft);color:var(--bad)}
+.result{font-weight:500;padding:10px 14px;border-radius:9px}
+.result.ok{background:var(--good-soft);color:var(--good)}
+.result.no{background:var(--surface-2);color:var(--fg-2)}
+
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:80;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:28px 18px;text-align:center;color:var(--muted)}
+.back{margin:-6px 0 10px -6px}
+
+
+/* ===== Public area (visitor) ===== */
+.navi .badge{flex:none}
+.ptg{flex:none!important;font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--violet);background:var(--violet-soft);border-radius:4px;padding:1px 6px}
+.navmore{display:none}
+.lnk{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.lnk:hover{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.panel-h .lnk{font-weight:500;color:var(--accent);font-size:13px}
+.hero{position:relative;overflow:hidden;background:var(--board);color:var(--board-fg);border-radius:16px;padding:32px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:18px}
+.hero .court{position:absolute;inset:16px;border:2px solid rgba(255,255,255,.07);border-radius:6px;pointer-events:none}
+.hero .court::before{content:"";position:absolute;top:0;bottom:0;left:58%;border-left:2px dashed rgba(255,255,255,.1)}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(245,180,0,.3),transparent 65%);pointer-events:none}
+.hero-main,.hero .next{position:relative;z-index:1;min-width:0}
+.eyebrow-l{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.hero h1{font-family:var(--f-display);font-size:38px;line-height:1.05;letter-spacing:-.02em;margin:8px 0 10px;text-wrap:balance}
+.hero p{color:var(--board-muted);margin:0 0 18px;max-width:46ch}
+.btn.hero-ghost{background:transparent;border-color:var(--board-3);color:var(--board-fg)}
+.btn.hero-ghost:hover{background:var(--board-2)}
+.next{background:var(--board-2);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.next .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--board-muted)}
+.next b{font-family:var(--f-display);font-size:20px}
+.next .meta{color:var(--board-muted);font-size:13px}
+.next .count{color:var(--board-muted);font-size:14px;margin:4px 0}
+.next .count strong{font-family:var(--f-display);font-size:40px;line-height:1;color:var(--sun);margin-right:6px;font-weight:800}
+.next .chip{align-self:flex-start}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.champ{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+.champ:last-child{border-bottom:0}
+.champ small{display:block;font-size:12px;color:var(--muted)}
+.champ .lnk{font-weight:600}
+.mini-rank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 20px;padding:12px 16px}
+.mini-rank small{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+.mr{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13.5px}
+.mr .lnk{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mr .medal{width:22px;height:22px;font-size:12px;flex:none}
+.pan-banner{margin-top:18px;width:100%;display:flex;align-items:center;gap:14px;text-align:left;padding:16px 18px;border-radius:12px;border:1px solid color-mix(in srgb,var(--sun) 35%,var(--line));background:var(--sun-soft);color:var(--fg);cursor:pointer}
+.pan-banner .txt{flex:1;min-width:0;font-size:13.5px;color:var(--fg-2)}
+.pan-banner .txt b{display:block;color:var(--fg);font-size:15px}
+.pan-banner .arr{font-size:20px;color:var(--sun-ink)}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:var(--surface);margin-bottom:12px;color:var(--muted)}
+.searchbox input{border:0;outline:0;background:transparent;flex:1;min-width:0;color:var(--fg)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.rc{display:flex;flex-wrap:wrap;gap:4px}
+.rchip{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--fg-2);white-space:nowrap}
+.rchip b{font-weight:600;color:var(--fg)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.acard{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.acard:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.acard .t{flex:1;min-width:0}
+.acard b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acard small{font-size:12px;color:var(--muted)}
+.tchip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--sun-ink);background:var(--sun-soft);border-radius:6px;padding:2px 7px;flex:none}
+.tchip svg{width:13px;height:13px}
+.prof{display:flex;gap:16px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.av.big{width:64px;height:64px;font-size:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.tile{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.tile .ico{width:30px;height:30px;margin-bottom:6px}
+.tile small{font-size:12.5px;color:var(--muted)}
+.tile b{font-family:var(--f-display);font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile em{font-style:normal;font-size:12px;color:var(--muted)}
+.tl{display:grid;grid-template-columns:76px minmax(0,1fr) minmax(0,1fr);gap:4px 16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+.tl:last-child{border-bottom:0}
+.tl .yr{font-family:var(--f-display);font-weight:800;font-size:22px}
+.tl small{display:block;font-size:11.5px;color:var(--muted)}
+.tl .lnk{font-weight:600}
+.lead-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line-2)}
+.lead-row:last-child{border-bottom:0}
+.lead-row .rk{width:20px;color:var(--muted);font-weight:600}
+.lead-row .n{margin-left:auto;display:flex;align-items:center;gap:4px;font-family:var(--f-display);font-weight:800;font-size:18px;color:var(--sun-ink)}
+.lead-row .n svg{width:15px;height:15px}
+.rec{padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.rec small{display:block;font-size:12.5px;color:var(--muted)}
+.rec b{display:block;font-family:var(--f-display);font-size:26px;font-weight:800;line-height:1.1}
+.rec .lnk{font-weight:600}
+.phase-note{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--violet);background:var(--violet-soft);border-radius:6px;padding:3px 8px;margin-bottom:8px}
+.morei{display:flex;align-items:center;gap:12px;width:100%;padding:14px 4px;border:0;border-bottom:1px solid var(--line-2);background:none;text-align:left;font-weight:600;font-size:15px;color:var(--fg)}
+.morei:last-child{border-bottom:0}
+.morei svg{color:var(--accent);width:20px;height:20px}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);padding:22px}
+  .hero h1{font-size:28px}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .nav-extra{display:none!important}
+  .navmore{display:flex}
+  .navmore.on{color:var(--accent)}
+  .ptg{display:none}
+  .rankt,.rankt tbody{display:block}
+  .rankt thead{display:none}
+  .rankt tr{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+  .rankt tr:last-child{border-bottom:0}
+  .rankt td{padding:0;border:0}
+  .rankt td.place{width:auto}
+  .rankt td:nth-child(3){grid-column:2/-1;grid-row:2}
+  .tl{grid-template-columns:56px minmax(0,1fr)}
+  .tl>div:nth-child(3){grid-column:2}
+}
+@media (max-width:480px){.mini-rank{grid-template-columns:minmax(0,1fr)}}
+
+/* ===== Full-vision features ===== */
+.tag.junior{background:var(--teal-soft);color:var(--teal)}
+.datebox.junior{background:var(--teal-soft);color:var(--teal)}
+.topx{display:flex;align-items:center;gap:8px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;font-size:12px;font-weight:600}
+.lang button{border:0;background:var(--surface);color:var(--muted);padding:5px 9px}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.whocard .t{flex:1}
+.bell{position:relative;width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--fg-2);flex:none;margin-left:auto}
+.bell .badge{position:absolute;top:-6px;right:-6px}
+.notif{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.notif .txt{flex:1;min-width:0}
+.notif b{display:block}
+.notif span{font-size:13px;color:var(--fg-2)}
+.notif small{font-size:12px;color:var(--muted)}
+.alert{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:12px;border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line));background:var(--warn-soft);margin-bottom:12px}
+.alert .t{flex:1;min-width:200px}
+.alert .t b{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.alert .t span{font-size:13px;color:var(--fg-2)}
+.iconbtn{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;color:var(--fg-2);flex:none}
+.iconbtn:hover{color:var(--accent);border-color:var(--accent)}
+.srow .act{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.photo{position:relative;display:block;aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:0;padding:0;cursor:pointer;background:var(--surface-2);width:100%;max-width:100%}
+.photo svg{width:100%;height:100%;display:block}
+.photo .cap{position:absolute;left:8px;bottom:7px;right:8px;font-size:11.5px;font-weight:600;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,.6);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.album{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;cursor:pointer}
+.album:hover{border-color:var(--accent)}
+.album b{font-weight:600}
+.album small{color:var(--muted);font-size:12.5px}
+.album .photo{pointer-events:none}
+.bigphoto{border-radius:12px;overflow:hidden;aspect-ratio:4/3}
+.bigphoto svg{width:100%;height:100%;display:block}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);background:var(--surface);cursor:pointer;width:100%;font-size:13px}
+.drop:hover{border-color:var(--accent);color:var(--accent)}
+.drop b{display:block;color:var(--fg);font-size:15px;margin:6px 0 2px}
+.meter{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent)}
+.news-card{display:flex;flex-direction:column;gap:8px;padding:16px 18px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;cursor:pointer;color:var(--fg)}
+.news-card:hover{border-color:var(--accent)}
+.news-card h3{margin:0;font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:-.01em}
+.news-card p{margin:0;color:var(--fg-2);font-size:13.5px}
+.news-card small{color:var(--muted);font-size:12px}
+.sponsors{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.spons{display:flex;align-items:center;justify-content:center;gap:8px;height:64px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-family:var(--f-display);font-weight:800;letter-spacing:.03em;color:var(--fg-2);font-size:14px}
+.spons i{width:20px;height:20px;border-radius:6px;display:inline-block}
+.bracket{display:grid;grid-template-columns:repeat(3,minmax(200px,1fr));gap:16px;min-width:640px}
+.bcol{display:flex;flex-direction:column;justify-content:space-around;gap:12px}
+.bcol h4{margin:0;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.bm2{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.bm2>div{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;font-size:13px}
+.bm2>div+div{border-top:1px solid var(--line-2)}
+.bm2 .w{font-weight:700;background:var(--accent-soft);color:var(--accent-ink)}
+.bm2 .tbd{color:var(--muted)}
+.bm2 .lbl{font-size:11px;color:var(--muted);background:var(--surface-2);padding:4px 10px}
+.pools{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+.qr{width:190px;height:190px;margin:0 auto;display:block;background:#FFFFFF;padding:10px;border-radius:10px}
+.bars{display:flex;flex-direction:column;gap:12px;padding:16px}
+.barrow{display:grid;grid-template-columns:130px minmax(0,1fr) 40px;gap:10px;align-items:center;font-size:13px}
+.bartrack{display:flex;height:18px;border-radius:5px;overflow:hidden;background:var(--surface-2)}
+.bartrack i{display:block;height:100%}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);padding:0 16px 14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.social{width:100%;max-width:380px;aspect-ratio:1;margin:0 auto;border-radius:14px;background:#0B1A3A;color:#FFFFFF;padding:26px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.social::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(245,180,0,.35),transparent 65%)}
+.social .k{font-size:11px;font-weight:700;letter-spacing:.14em;color:#19C3FF}
+.social h3{font-family:var(--f-display);font-size:26px;line-height:1.05;margin:6px 0 0}
+.social .wn{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.social .wn small{display:block;color:#A9B6D3;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.social .wn b{font-size:16px}
+.social .sp{font-size:11.5px;color:#A9B6D3}
+.post{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line-2)}
+.post:last-child{border-bottom:0}
+.post .txt{flex:1;min-width:0}
+.post .txt>b{display:block}
+.post .txt>span{font-size:13.5px;color:var(--fg-2)}
+.post small{font-size:12px;color:var(--muted)}
+textarea.input{resize:vertical;font:inherit}
+@media (max-width:640px){.barrow{grid-template-columns:84px minmax(0,1fr) 34px}.post{flex-wrap:wrap}.post .txt{flex:1 1 calc(100% - 60px)}.post>.btn{margin-left:46px}}
+@media (max-width:420px){#roles{gap:2px}#roles button{padding:5px 6px;font-size:11.5px}}
+.ls{display:none}
+@media (max-width:900px){
+  .lf{display:none}.ls{display:inline}
+  .plabel{display:none}
+  .roles{flex:1;justify-content:space-between}
+  .roles button{padding:5px 9px;font-size:12.5px}
+  .roleline{font-size:12.5px;padding:8px 12px;margin-bottom:16px}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:45;order:0;width:auto;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;overflow:visible;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(11,13,18,.06)}
+  .nav.single{display:none}
+  .navi{flex-direction:column;gap:3px;padding:6px 2px;font-size:11px;font-weight:600;color:var(--muted);text-align:center;border-radius:10px;position:relative;min-height:50px;justify-content:center}
+  .navi svg{width:22px;height:22px}
+  .navi span{flex:none}
+  .navi[aria-current="page"]{background:transparent;color:var(--accent)}
+  .navi .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:16px;height:16px;font-size:10px;padding:0 4px}
+  main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  #toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  h1.page{font-size:24px}
+  .head{margin-bottom:16px}
+  .head>.btn,.head>.row{width:100%}
+  .head>.btn{justify-content:center}
+  .seg{max-width:100%}
+  .tbl.stack{min-width:0!important}
+  .tbl.stack thead{display:none}
+  .tbl.stack tr{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-bottom:1px solid var(--line-2)}
+  .tbl.stack tr:last-child{border-bottom:0}
+  .tbl.stack td{display:block;padding:0;border:0;white-space:normal!important}
+  .tbl.stack td.r{text-align:left}
+  .tbl.stack td[data-l]::before{content:attr(data-l);display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+  .tbl.elist{min-width:0}
+  .tbl.elist tr{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;padding:12px 16px;column-gap:10px;row-gap:8px;border-bottom:1px solid var(--line-2)}
+  .tbl.elist tr:last-child{border-bottom:0}
+  .tbl.elist td{padding:0;border:0}
+  .tbl.elist td.place{width:auto}
+  .tbl.elist td:nth-child(4){grid-column:1/-1;text-align:left}
+  .tbl.elist td:nth-child(4):empty{display:none}
+  .tbl.elist td[colspan]{grid-column:1/-1}
+  .claim-body{flex:1 1 100%!important}
+  .tbl.stack,.tbl.stack tbody,.tbl.elist,.tbl.elist tbody{display:block;width:100%}
+  .tbl.elist colgroup{display:none}
+  .overlay{align-items:flex-end;padding:0}
+  .modal,.modal.wide{max-width:none;border-radius:16px 16px 0 0;max-height:92%;animation:sheet .22s ease-out}
+  .mfoot{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));position:sticky;bottom:0}
+  .mfoot .btn{flex:1;justify-content:center}
+  .mfoot>.row{flex:1;justify-content:flex-end}
+  .mhead::before{content:"";position:absolute;left:50%;top:6px;width:36px;height:4px;border-radius:2px;background:var(--line);transform:translateX(-50%)}
+  .mhead{position:relative;padding-top:20px}
+  .callout .btn{flex:1;justify-content:center}
+  .trow .act .btn{flex:1;justify-content:center}
+}
+@media (max-width:420px){.roles button i{display:none}.ptag{display:none}}
+@keyframes sheet{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="pbar"><div class="pbar-in"><span class="ptag">Προεπισκόπηση</span><span class="plabel">Δες την εφαρμογή ως</span><div class="roles" id="roles"></div></div></div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#F5B400"/><path d="M1.6 5.5c3.4.4 6.6 2.8 8 9.4M5 1.3c-.4 3.6 1.6 7 8.8 8" fill="none" stroke="#0B1A3A" stroke-width="1.3"/></svg></div><div><b>Beach Volley Hub</b><small>Πανελλήνιο Πρωτάθλημα</small></div></div>
+    <nav class="nav" id="tabs" aria-label="Ενότητες"></nav>
+    <div class="whocard" id="who"></div>
+  </aside>
+  <div class="content">
+    <div class="topbar"><div class="crumb" id="crumb"></div>
+      <div class="topx"><div class="lang" id="lang" aria-label="Γλώσσα"></div><label class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Αναζήτηση τουρνουά ή αθλητή" aria-label="Αναζήτηση"><span class="kbd">⌘K</span></label></div></div>
+    <main id="app"></main>
+  </div>
+</div>
+<div id="modal-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=(s,el=document)=>el.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n).toLocaleString('el-GR');
+function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
+function shuffle(arr,seed){const r=rng(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const MG=['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'];
+const MS=['ΙΑΝ','ΦΕΒ','ΜΑΡ','ΑΠΡ','ΜΑΪ','ΙΟΥΝ','ΙΟΥΛ','ΑΥΓ','ΣΕΠ','ΟΚΤ','ΝΟΕ','ΔΕΚ'];
+const DY=['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'];
+function pd(s){const[d,t='00:00']=String(s).split('T');const[y,m,da]=d.split('-').map(Number);const[h,mi]=t.split(':').map(Number);return new Date(y,m-1,da,h||0,mi||0);}
+const p2=n=>String(n).padStart(2,'0');
+function drange(s,e){const a=pd(s),b=pd(e);if(a.getMonth()===b.getMonth())return `${a.getDate()}–${b.getDate()} ${MG[a.getMonth()]} ${a.getFullYear()}`;return `${a.getDate()} ${MG[a.getMonth()]} – ${b.getDate()} ${MG[b.getMonth()]} ${b.getFullYear()}`;}
+function dtime(s){const d=pd(s);return `${DY[d.getDay()]} ${d.getDate()} ${MG[d.getMonth()]}, ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600);}
+
+/* ---------- sample data (fictional) ---------- */
+const NOW=pd('2027-05-20T12:00');
+const MF=['Νίκος','Κώστας','Δημήτρης','Στέλιος','Άρης','Παύλος','Μάνος','Θάνος','Λευτέρης','Μιχάλης','Γιάννης','Πέτρος','Σπύρος','Τάσος','Βασίλης','Χρήστος','Αντώνης','Φίλιππος','Ηλίας'];
+const MSN=['Αλεξίου','Βλάχος','Γεωργίου','Δούκας','Ευαγγέλου','Ζαχαρίου','Ηλιόπουλος','Καλογήρου','Λαμπράκης','Μαυρίδης','Νικολαΐδης','Ξενάκης','Οικονόμου','Πετρίδης','Ρήγας','Σαββίδης','Τσακίρης','Φωτίου','Χατζής','Ψαράς','Αναστασίου','Μπέλλος','Κυριακίδης','Λιούτας','Μαργαρίτης','Ντίνος','Πανάγος','Σταθάκης','Τζαννής','Βουλγαράκης','Γκότσης','Δεληγιάννης'];
+const WF=['Ελένη','Μαρία','Κατερίνα','Δέσποινα','Ιωάννα','Σοφία','Αναστασία','Βάσω','Χριστίνα','Νεφέλη','Αλεξάνδρα','Ζωή','Ειρήνη','Δανάη','Μυρτώ','Φωτεινή','Λυδία'];
+const WSN=['Αθανασίου','Βασιλείου','Γκίκα','Δημάκη','Ζέρβα','Θεοχάρη','Καρρά','Λιάπη','Μελά','Ντόκου','Παππά','Ρούσσου','Σταμάτη','Τσιρίγου','Φραγκιαδάκη','Χριστάκη','Αργύρη','Μπαλτά','Κουτρούλη','Λαζαρίδου','Μαυροπούλου','Νάτση','Πολυχρόνη','Σαρρή','Τριανταφύλλου','Βλαχάκη','Γαλάνη','Δρόσου','Κεφαλά','Μιχαηλίδου','Ορφανίδου','Ζουμπούλη'];
+const ATH={};
+function makeAthletes(g,F,SN,seed){
+  const order=shuffle(SN.map((s,i)=>i),seed);const r=rng(seed+7);
+  return SN.map((s,i)=>{const rank=order.indexOf(i);const pts=Math.max(40,Math.round(2600*Math.pow(.9,rank)/10)*10+Math.round(r()*4)*10);
+    const a={id:g+i,g,first:F[i%F.length],last:s,pts,account:true,born:1991+Math.floor(r()*14)};a.name=a.first+' '+a.last;ATH[a.id]=a;return a;});
+}
+const MEN=makeAthletes('M',MF,MSN,11),WOMEN=makeAthletes('W',WF,WSN,22);
+['M29','M31','W30'].forEach(id=>ATH[id].account=false);
+function makeTeams(list,g){
+  const s=list.slice().sort((a,b)=>b.pts-a.pts),T=[];
+  for(let i=0;i<s.length;i+=4){const q=s.slice(i,i+4);if(q.length===4){T.push([q[0],q[3]],[q[1],q[2]]);}else{for(let j=0;j<q.length;j+=2)if(q[j+1])T.push([q[j],q[j+1]]);}}
+  const teams=T.map((p,i)=>({id:'T'+g+i,g,a:p[0],b:p[1]}));
+  const by=()=>teams.slice().sort((x,y)=>tp(y)-tp(x));
+  let o=by();const diff=tp(o[9])-tp(o[10]);o[10].b.pts+=diff; // one tie to show the draw rule
+  return teams;
+}
+const tp=t=>t.a.pts+t.b.pts;
+const TEAMS={M:makeTeams(MEN,'M'),W:makeTeams(WOMEN,'W')};
+const tl=t=>`${t.a.first[0]}. ${t.a.last} / ${t.b.first[0]}. ${t.b.last}`;
+const ME='M14';
+
+const SCALE={1:100,2:85,3:70,4:55,5:40,7:25,9:10,13:5,17:2,25:1};
+const PL=[1,2,3,4,5,5,5,5,9,9,9,9,13,13,13,13];
+const PLR={5:'5–8',9:'9–12',13:'13–16'};
+const PAST=[
+ {id:'th26',season:2026,name:'Masters Θεσσαλονίκης',venue:'Παραλία Αριστοτέλους, Θεσσαλονίκη',start:'2026-06-12',end:'2026-06-14',type:'Masters',coef:1},
+ {id:'io26',season:2026,name:'Masters Ίου',venue:'Μυλοπότας, Ίος',start:'2026-07-10',end:'2026-07-12',type:'Masters',coef:1},
+ {id:'ma26',season:2026,name:'Masters Μαραθώνα',venue:'Σχινιάς, Μαραθώνας',start:'2026-08-07',end:'2026-08-09',type:'Masters',coef:1},
+ {id:'fi26',season:2026,name:'Finals Αθήνας',venue:'Παλαιό Φάληρο, Αθήνα',start:'2026-09-04',end:'2026-09-06',type:'Finals',coef:2},
+ {id:'th25',season:2025,name:'Masters Θεσσαλονίκης',venue:'Παραλία Αριστοτέλους, Θεσσαλονίκη',start:'2025-06-13',end:'2025-06-15',type:'Masters',coef:1},
+ {id:'io25',season:2025,name:'Masters Ίου',venue:'Μυλοπότας, Ίος',start:'2025-07-11',end:'2025-07-13',type:'Masters',coef:1},
+ {id:'ma25',season:2025,name:'Masters Μαραθώνα',venue:'Σχινιάς, Μαραθώνας',start:'2025-08-08',end:'2025-08-10',type:'Masters',coef:1},
+ {id:'fi25',season:2025,name:'Finals Αθήνας',venue:'Παλαιό Φάληρο, Αθήνα',start:'2025-09-05',end:'2025-09-07',type:'Finals',coef:2},
+];
+let UPC=[
+ {id:'t27a',name:'Masters Θεσσαλονίκης',venue:'Παραλία Αριστοτέλους, Θεσσαλονίκη',start:'2027-06-11',end:'2027-06-13',regOpen:'2027-05-10T10:00',regClose:'2027-06-01T20:00',type:'Masters',coef:1,cats:['M','W'],main:12,direct:8,wc:2,qual:8,minAge:16,admin:'Αλέξης Κωνσταντίνου'},
+ {id:'t27b',name:'Masters Ίου',venue:'Μυλοπότας, Ίος',start:'2027-07-09',end:'2027-07-11',regOpen:'2027-05-15T10:00',regClose:'2027-06-29T20:00',type:'Masters',coef:1,cats:['M','W'],main:12,direct:8,wc:2,qual:8,minAge:16,admin:'Ρένα Μαργαρίτη'},
+ {id:'t27c',name:'Masters Μαραθώνα',venue:'Σχινιάς, Μαραθώνας',start:'2027-08-06',end:'2027-08-08',regOpen:'2027-06-20T10:00',regClose:'2027-07-27T20:00',type:'Masters',coef:1,cats:['M','W'],main:12,direct:8,wc:2,qual:8,minAge:16,admin:''},
+ {id:'t27d',name:'Finals Αθήνας',venue:'Παλαιό Φάληρο, Αθήνα',start:'2027-09-03',end:'2027-09-05',regOpen:'2027-08-12T10:00',regClose:'2027-08-24T20:00',type:'Finals',coef:2,cats:['M','W'],main:16,direct:14,wc:2,qual:0,minAge:16,admin:''},
+];
+function regStatus(t){const o=pd(t.regOpen),c=pd(t.regClose);if(NOW<o)return'soon';if(NOW<=c)return'open';return'closed';}
+
+/* past results */
+const RES={};
+function setsFor(r,winnerFirst){
+  const win=()=>{const x=r();return x<.12?[22,20]:x<.17?[23,21]:[21,12+Math.floor(r()*8)];};
+  const three=r()<.38;let s;
+  if(three){const a=win(),b=win().reverse(),c=r()<.1?[16,14]:[15,7+Math.floor(r()*7)];s=r()<.5?[a,b,c]:[b,a,c];}
+  else s=[win(),win()];
+  return winnerFirst?s:s.map(x=>x.slice().reverse());
+}
+function results(t,g){
+  const k=t.id+g;if(RES[k])return RES[k];
+  const r=rng(hash(k));const order=shuffle(TEAMS[g],hash(k));
+  const stand=order.map((tm,i)=>({team:tm,place:PL[i],pts:Math.ceil(SCALE[PL[i]]*5*t.coef)}));
+  const p=order;const M=(lbl,A,B)=>({lbl,a:A,b:B,sets:setsFor(r,true)});
+  const matches=[M('Τελικός',p[0],p[1]),M('Μικρός τελικός',p[2],p[3]),M('Ημιτελικός',p[0],p[3]),M('Ημιτελικός',p[1],p[2]),M('Προημιτελικός',p[0],p[7]),M('Προημιτελικός',p[3],p[4]),M('Προημιτελικός',p[1],p[6]),M('Προημιτελικός',p[2],p[5])];
+  return RES[k]={stand,matches};
+}
+
+/* live schedule for the tournament admin */
+let MATCHES=(()=>{
+  const r=rng(77),M=TEAMS.M,W=TEAMS.W,out=[];
+  const plan=[['09:00',1,'M','Όμιλος A',M[0],M[7]],['09:00',2,'M','Όμιλος B',M[1],M[6]],['09:00',3,'W','Όμιλος A',W[0],W[7]],
+    ['09:50',1,'W','Όμιλος B',W[1],W[6]],['09:50',2,'M','Όμιλος C',M[2],M[5]],['09:50',3,'M','Όμιλος D',M[3],M[4]],
+    ['10:40',1,'W','Όμιλος C',W[2],W[5]],['10:40',2,'W','Όμιλος D',W[3],W[4]],['10:40',3,'M','Όμιλος A',M[0],M[11]],
+    ['11:30',1,'M','Όμιλος B',M[1],M[10]],['11:30',2,'W','Όμιλος A',W[0],W[11]],['11:30',3,'W','Όμιλος B',W[1],W[10]],
+    ['12:20',1,'M','Όμιλος C',M[2],M[9]],['12:20',2,'M','Όμιλος D',M[3],M[8]]];
+  plan.forEach((p,i)=>{const m={id:'m'+i,time:p[0],court:p[1],g:p[2],round:'Κύριο ταμπλό · '+p[3],a:p[4],b:p[5],sets:null};
+    if(i<5)m.sets=setsFor(r,r()<.7);out.push(m);});
+  return out;})();
+
+/* users and admin data */
+let ADMINS=[
+ {name:'Γραμματεία Πρωταθλήματος',email:'gramm•••@gmail.com',role:'super',scope:'Όλα τα τουρνουά',status:'Ενεργός'},
+ {name:'Αλέξης Κωνσταντίνου',email:'a.kon•••@gmail.com',role:'tadmin',scope:'Masters Θεσσαλονίκης 2027',status:'Ενεργός'},
+ {name:'Ρένα Μαργαρίτη',email:'r.mar•••@yahoo.gr',role:'tadmin',scope:'Masters Ίου 2027',status:'Ενεργός'},
+];
+let CLAIMS=[
+ {id:'c1',acct:'tpetr•••@gmail.com',ath:'M13',why:'Το email του λογαριασμού δεν ταιριάζει με αυτό του μητρώου.',when:'Σήμερα, 11:20'},
+ {id:'c2',acct:'zoi.r•••@outlook.com',ath:'W11',why:'Δεν υπάρχει email στο μητρώο για αυτή την αθλήτρια.',when:'Χθες, 18:05'},
+];
+const TAKEN={t27a:new Set(['M0','M1','M4','M5','M20']),t27b:new Set(['M0','M3'])};
+
+
+/* ---------- state ---------- */
+const S={role:'visitor',tab:{visitor:'home',athlete:'tournaments',tadmin:'schedule',super:'overview',photo:'upload'},
+  season:2026,openT:null,openA:null,q:{rank:'',ath:''},rankG:'M',rankS:2026,athG:'all',lang:'el',openAlb:null,galMine:null,upAlb:'fi26',upQueue:[],medOk:false,drawG:'M',drawn:{M:false,W:false},wd:{M:new Set(),W:new Set()},resG:'M',schedF:'all',schedG:'all',listG:'M',wc:{M:new Set(),W:new Set()},pub:{M:null,W:null},
+  regs:[],invites:[{id:'i1',t:'t27b',from:'M9',status:'pending'}],modal:null};
+
+const ROLES=[{id:'visitor',label:'Επισκέπτης',sh:'Επισκέπτης',c:'#A9B6D3'},{id:'athlete',label:'Αθλητής',sh:'Αθλητής',c:'#5B8DEF'},{id:'tadmin',label:'Admin τουρνουά',sh:'Admin',c:'#3CC2B2'},{id:'super',label:'Super admin',sh:'Super',c:'#A390F0'},{id:'photo',label:'Φωτογράφος',sh:'Φωτογρ.',c:'#F5B400'}];
+const TABS={
+  visitor:[['home','Αρχική'],['calendar','Τουρνουά 2027'],['results','Αποτελέσματα'],['ranking','Βαθμολογία'],['athletes','Αθλητές'],['pantheon','Πάνθεον'],['gallery','Γκαλερί'],['news','Νέα']],
+  athlete:[['tournaments','Τουρνουά 2027'],['mine','Οι δηλώσεις μου'],['partners','Ψάχνω συμπαίκτη'],['gallery','Οι φωτογραφίες μου'],['results','Αποτελέσματα']],
+  tadmin:[['schedule','Αγώνες & σκορ'],['draw','Ταμπλό'],['checkin','Check-in'],['referees','Διαιτητές'],['results','Αποτελέσματα']],
+  super:[['overview','Επισκόπηση'],['tournaments','Τουρνουά'],['lists','Λίστες συμμετοχής'],['schedule','Αγώνες & σκορ'],['draw','Ταμπλό'],['users','Χρήστες & ρόλοι'],['reports','Αναφορές'],['content','Νέα & χορηγοί'],['audit','Ιστορικό αλλαγών'],['results','Αποτελέσματα']],
+  photo:[['upload','Ανέβασμα'],['gallery','Γκαλερί']],
+};
+const SHORT={overview:'Αρχική',tournaments:'Τουρνουά',lists:'Λίστες',schedule:'Σκορ',users:'Χρήστες',mine:'Δηλώσεις',results:'Αποτελέσματα',home:'Αρχική',calendar:'Τουρνουά',ranking:'Βαθμολογία',athletes:'Αθλητές',pantheon:'Πάνθεον',gallery:'Γκαλερί',news:'Νέα',partners:'Συμπαίκτες',draw:'Ταμπλό',checkin:'Check-in',referees:'Διαιτητές',reports:'Αναφορές',content:'Νέα',audit:'Αλλαγές',upload:'Ανέβασμα'};
+const EN={home:'Home',calendar:'2027 events',results:'Results',ranking:'Rankings',athletes:'Athletes',pantheon:'Hall of Fame',gallery:'Gallery',news:'News',tournaments:'Tournaments',mine:'My entries',partners:'Find a partner',schedule:'Matches & scores',draw:'Draws',checkin:'Check-in',referees:'Referees',overview:'Overview',lists:'Entry lists',users:'Users & roles',reports:'Reports',content:'News & sponsors',audit:'Change log',upload:'Upload'};
+/* Public sections that belong to a later phase: shown with a small tag so new features slot in without layout changes */
+const PHASE={athletes:3,pantheon:3,gallery:3,news:3,partners:3,checkin:3,referees:3,reports:3,content:3,upload:3};
+const IC=p=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={
+  results:IC('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'),
+  tournaments:IC('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>'),
+  mine:IC('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>'),
+  schedule:IC('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>'),
+  overview:IC('<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>'),
+  lists:IC('<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'),
+  users:IC('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="m9 12 2 2 4-4"/>'),
+  home:IC('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
+  calendar:IC('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h3M8 17h6"/>'),
+  ranking:IC('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  athletes:IC('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+  pantheon:IC('<path d="M3 21h18M5 21V10M10 21V10M14 21V10M19 21V10M2 10h20L12 3z"/>'),
+  gallery:IC('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>'),
+  news:IC('<path d="M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/>'),
+  partners:IC('<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/>'),
+  draw:IC('<path d="M3 4h5v6H3M3 14h5v6H3M8 7h4v10H8M12 12h8"/>'),
+  checkin:IC('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/>'),
+  referees:IC('<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'),
+  reports:IC('<path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>'),
+  content:IC('<path d="M3 11v2a2 2 0 0 0 2 2h1l4 4V5L6 9H5a2 2 0 0 0-2 2zM14 8a5 5 0 0 1 0 8M17 5a9 9 0 0 1 0 14"/>'),
+  audit:IC('<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/>'),
+  upload:IC('<path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>'),
+  bell:IC('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>'),
+  more:IC('<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'),
+  trophy:IC('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/>'),
+  plus:IC('<path d="M12 5v14M5 12h14"/>'),
+  check:IC('<path d="M20 6 9 17l-5-5"/>'),
+  star:IC('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'),
+  bars:IC('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  mail:IC('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),
+  alert:IC('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>'),
+};
+const ROLELINE={
+  visitor:['#8D93A0','<strong>Επισκέπτης χωρίς σύνδεση.</strong> Βλέπει το πρόγραμμα, τα αποτελέσματα, τη βαθμολογία, τους αθλητές και το Πάνθεον. Για δήλωση συμμετοχής χρειάζεται σύνδεση.'],
+  athlete:['var(--accent)','<strong>Συνδεδεμένος αθλητής.</strong> Βλέπει τα τουρνουά της χρονιάς, δηλώνει συμμετοχή με συμπαίκτη και απαντά σε προσκλήσεις.'],
+  tadmin:['var(--teal)','<strong>Admin τουρνουά.</strong> Έχει πρόσβαση μόνο στο τουρνουά που του ανατέθηκε και καταχωρεί τα σκορ.'],
+  photo:['var(--sun)','<strong>Φωτογράφος (Φάση 3).</strong> Ανεβάζει φωτογραφίες αγώνων στη γκαλερί και επισημαίνει τους αθλητές που εμφανίζονται.'],
+  super:['var(--violet)','<strong>Super admin.</strong> Δημιουργεί τουρνουά και admins, εγκρίνει λίστες και wild cards, επαληθεύει αθλητές.'],
+};
+
+/* ---------- shell ---------- */
+function renderShell(){
+  $('#roles').innerHTML=ROLES.map(r=>`<button data-act="role" data-id="${r.id}" aria-pressed="${S.role===r.id}"><i style="background:${r.c}"></i><span class="lf">${r.label}</span><span class="ls">${r.sh}</span></button>`).join('');
+  const me=ATH[ME];
+  $('#who').innerHTML={visitor:`<div class="av gray">?</div><div class="t"><b>Δεν έχεις συνδεθεί</b><small>Επισκέπτης</small></div><button class="btn sm whobtn" data-act="login">Σύνδεση</button>`,
+    athlete:`<div class="av blue">${me.first[0]}${me.last[0]}</div><div class="t"><b>${esc(me.name)}</b><small>Αθλητής · Άνδρες</small></div>`,
+    tadmin:`<div class="av teal">ΑΚ</div><div class="t"><b>Αλέξης Κωνσταντίνου</b><small>Admin · Masters Θεσ/νίκης</small></div>`,
+    photo:`<div class="av sun">ΛΑ</div><div class="t"><b>Λευτέρης Ανδρέου</b><small>Φωτογράφος ΕΟΠΕ</small></div>`,
+    super:`<div class="av violet">ΓΠ</div><div class="t"><b>Γραμματεία</b><small>Super admin</small></div>`}[S.role];
+  if(S.role==='athlete'){const un=NOTIFS.filter(n=>n.unread).length;$('#who').insertAdjacentHTML('beforeend',`<button class="bell" data-act="notifs" aria-label="Ειδοποιήσεις">${ICON.bell}${un?`<span class="badge">${un}</span>`:''}</button>`);}
+  $('#lang').innerHTML=['el','en'].map(l=>`<button data-act="lang" data-id="${l}" aria-pressed="${S.lang===l}">${l.toUpperCase()}</button>`).join('');
+  const pend=S.invites.filter(i=>i.status==='pending').length;
+  const tabs=TABS[S.role],cur=S.tab[S.role],MAXM=5,over=tabs.length>MAXM;
+  const badge=id=>id==='mine'&&pend?`<span class="badge">${pend}</span>`:id==='users'&&CLAIMS.length?`<span class="badge">${CLAIMS.length}</span>`:'';
+  const nav=$('#tabs');nav.classList.toggle('single',tabs.length<2);
+  nav.innerHTML=tabs.map(([id,l],i)=>`<button class="navi${over&&i>=MAXM-1?' nav-extra':''}" data-act="tab" data-id="${id}" ${cur===id&&!S.openA?'aria-current="page"':''}>${ICON[id]}<span class="lf">${S.lang==='en'?EN[id]||l:l}</span><span class="ls">${S.lang==='en'?EN[id]||SHORT[id]:S.role==='super'&&id==='results'?'Ιστορικό':SHORT[id]}</span>${PHASE[id]?`<span class="ptg">Φάση ${PHASE[id]}</span>`:''}${badge(id)}</button>`).join('')
+    +(over?`<button class="navi navmore${tabs.slice(MAXM-1).some(t=>t[0]===cur)||S.openA?' on':''}" data-act="more">${ICON.more}<span class="ls">Περισσότερα</span></button>`:'');
+  const c=tabs.find(t=>t[0]===cur);
+  $('#crumb').innerHTML=S.openA?`Αθλητές<i>/</i><b>${esc(ATH[S.openA].name)}</b>`:`Σεζόν ${cur==='results'?S.season:cur==='ranking'?S.rankS:2027}<i>/</i><b>${c?c[1]:''}</b>`;
+}
+function render(){
+  document.documentElement.lang='el';
+  renderShell();
+  const V={results:vResults,tournaments:S.role==='super'?vTournamentsAdmin:vTournamentsAthlete,mine:vMine,schedule:vSchedule,overview:vOverview,lists:vLists,users:vUsers,
+    home:vHome,calendar:vCalendar,ranking:vRanking,athletes:vAthletes,pantheon:vPantheon,
+    gallery:vGallery,news:vNews,partners:vPartners,draw:vDraw,checkin:vCheckin,referees:vReferees,reports:vReports,content:vContent,audit:vAudit,upload:vUpload};
+  const v=S.openA?vProfile:V[S.tab[S.role]];
+  const rl=ROLELINE[S.role];
+  $('#app').innerHTML=`<div class="roleline"><span class="dot" style="background:${rl[0]}"></span><div>${rl[1]}</div></div>`+v();
+}
+
+/* ---------- results ---------- */
+function vResults(){
+  if(S.openT)return vResultDetail(PAST.find(t=>t.id===S.openT));
+  const seasons=[...new Set(PAST.map(t=>t.season))];
+  return `<div class="head"><div><h1 class="page">Αποτελέσματα</h1><p class="sub">Τελικές κατατάξεις και αγώνες τελικής φάσης κάθε τουρνουά.</p></div>
+    <div class="seg" role="group" aria-label="Σεζόν">${seasons.map(s=>`<button data-act="season" data-id="${s}" aria-pressed="${S.season===s}">Σεζόν ${s}</button>`).join('')}</div></div>
+    <div class="grid">${PAST.filter(t=>t.season===S.season).map(resultCard).join('')}</div>`;
+}
+function resultCard(t){
+  const m=results(t,'M').stand[0].team,w=results(t,'W').stand[0].team;
+  return `<button class="tcard" data-act="goT" data-id="${t.id}">
+    <div class="row" style="justify-content:space-between"><span class="tag ${tcls(t)}">${t.type}</span><span class="coef">×${t.coef}</span></div>
+    <h3>${t.name}</h3><div class="meta">${drange(t.start,t.end)} · ${t.venue}</div>
+    <div class="winners"><div>${ICON.trophy}<span>Άνδρες</span><b>${tl(m)}</b></div><div>${ICON.trophy}<span>Γυναίκες</span><b>${tl(w)}</b></div></div></button>`;
+}
+function medal(p){return p===1?'<span class="medal g">1</span>':p===2?'<span class="medal s">2</span>':p===3?'<span class="medal b">3</span>':p;}
+function vResultDetail(t){
+  const R=results(t,S.resG);
+  return `<button class="btn quiet back" data-act="closeT">← Σεζόν ${t.season}</button>
+   <div class="head"><div><div class="row" style="margin-bottom:6px"><span class="tag ${tcls(t)}">${t.type}</span><span class="chip good">Ολοκληρώθηκε</span></div>
+     <h1 class="page">${t.name} ${t.season}</h1><p class="sub">${drange(t.start,t.end)} · ${t.venue}</p></div>
+     <div class="row">${S.role==='super'||S.role==='tadmin'?`<button class="btn ghost sm" data-act="social" data-id="${t.id}">${ICON.gallery} Κάρτα για social media</button>`:''}<div class="seg" role="group" aria-label="Κατηγορία">${gBtns(S.resG,'resG')}</div></div></div>
+   <div class="two">
+     <div class="card"><div class="panel-h">Τελική κατάταξη <span>Βαθμοί ανά αθλητή</span></div><div class="tscroll"><table class="tbl"><thead><tr><th>Θέση</th><th>Ομάδα</th><th class="r">Βαθμοί</th></tr></thead><tbody>
+       ${R.stand.map(s=>`<tr><td class="place">${medal(s.place)}${PLR[s.place]?`<small>${PLR[s.place]}</small>`:''}</td><td class="team"><b>${s.team.a.last} / ${s.team.b.last}</b><small>${lnk(s.team.a,true)} · ${lnk(s.team.b,true)}</small></td><td class="r num">${fmt(s.pts)}</td></tr>`).join('')}
+     </tbody></table></div></div>
+     <div class="board"><div class="board-h">Τελική φάση <span>Σετ</span></div>${R.matches.map(m=>boardMatch(m,m.lbl)).join('')}</div>
+   </div>`;
+}
+function gBtns(cur,key){return [['M','Άνδρες'],['W','Γυναίκες']].map(([g,l])=>`<button data-act="setg" data-key="${key}" data-id="${g}" aria-pressed="${cur===g}">${l}</button>`).join('');}
+function boardRows(m){
+  const aw=m.sets.filter(s=>s[0]>s[1]).length,bw=m.sets.length-aw,A=aw>bw;
+  const sp=i=>m.sets.map(s=>`<span class="${s[i]>s[1-i]?'w':''}">${s[i]}</span>`).join('');
+  return `<div class="bm-row ${A?'win':''}"><span class="bm-tn">${tl(m.a)}</span><span class="bm-sets">${sp(0)}</span><span class="bm-tot">${aw}</span></div>
+    <div class="bm-row ${A?'':'win'}"><span class="bm-tn">${tl(m.b)}</span><span class="bm-sets">${sp(1)}</span><span class="bm-tot">${bw}</span></div>`;
+}
+function boardMatch(m,lbl){return `<div class="bm"><div class="bm-lbl">${lbl}</div>${boardRows(m)}</div>`;}
+
+/* ---------- public area: data helpers ---------- */
+const lnk=(a,full)=>`<button class="lnk" data-act="openA" data-id="${a.id}">${full?esc(a.name):esc(a.first[0]+'. '+a.last)}</button>`;
+const SHORTT={th:'Θεσ/νίκη',io:'Ίος',ma:'Μαραθώνας',fi:'Finals'};
+const HIST=[2018,2019,2020,2021,2022,2023,2024].map(y=>{const r=rng(y*7919);return {season:y,M:TEAMS.M[Math.floor(r()*6)],W:TEAMS.W[Math.floor(r()*6)]};});
+let STATS=null;
+function stats(){
+  if(STATS)return STATS;
+  const st={},get=id=>st[id]||(st[id]={res:[],titles:0,pods:0,w:0,l:0,fin:0,finYears:[]});
+  PAST.forEach(t=>['M','W'].forEach(g=>{const R=results(t,g);
+    R.stand.forEach(x=>[[x.team.a,x.team.b],[x.team.b,x.team.a]].forEach(([a,p])=>{const o=get(a.id);o.res.push({t,place:x.place,pts:x.pts,partner:p});
+      if(x.place===1){o.titles++;if(t.type==='Finals'){o.fin++;o.finYears.push(t.season);}}if(x.place<=3)o.pods++;}));
+    R.matches.forEach(m=>{const aw=m.sets.filter(z=>z[0]>z[1]).length*2>m.sets.length;[[m.a,aw],[m.b,!aw]].forEach(([tm,won])=>[tm.a,tm.b].forEach(a=>{won?get(a.id).w++:get(a.id).l++;}));});
+  }));
+  HIST.forEach(h=>['M','W'].forEach(g=>[h[g].a,h[g].b].forEach(a=>{const o=get(a.id);o.titles++;o.fin++;o.finYears.push(h.season);})));
+  return STATS=st;
+}
+const RANKC={};
+function ranking(season,g){
+  const k=season+g;if(RANKC[k])return RANKC[k];const st=stats();
+  const arr=(g==='M'?MEN:WOMEN).map(a=>{const rs=((st[a.id]||{res:[]}).res).filter(r=>r.t.season===season).sort((x,y)=>y.pts-x.pts);const best=rs.slice(0,3);
+    return {a,total:best.reduce((n,r)=>n+r.pts,0),best,played:rs.length};}).sort((x,y)=>y.total-x.total||x.a.last.localeCompare(y.a.last,'el'));
+  let rk=0,prev=null;arr.forEach((r,i)=>{if(r.total!==prev){rk=i+1;prev=r.total;}r.rank=rk;});
+  return RANKC[k]=arr;
+}
+function rankOf(a){return ranking(2026,a.g).find(r=>r.a.id===a.id);}
+function titleLeaders(g){const st=stats();return Object.values(ATH).filter(a=>g==='all'||a.g===g).map(a=>({a,n:(st[a.id]||{titles:0}).titles})).filter(x=>x.n>0).sort((x,y)=>y.n-x.n||x.a.last.localeCompare(y.a.last,'el'));}
+function champions(){
+  const recent=PAST.filter(t=>t.type==='Finals').map(t=>({season:t.season,M:results(t,'M').stand[0].team,W:results(t,'W').stand[0].team,real:true}));
+  return [...recent,...HIST].sort((x,y)=>y.season-x.season);
+}
+const phaseNote=n=>`<span class="phase-note">${ICON.star} Προαιρετική λειτουργία · Φάση ${n}</span>`;
+
+/* ---------- public area: pages ---------- */
+function vHome(){
+  const nx=UPC.find(t=>pd(t.end)>=NOW)||UPC[0],days=Math.max(0,Math.ceil((pd(nx.start)-NOW)/864e5)),st=regStatus(nx);
+  const fin=PAST.find(t=>t.id==='fi26'),cm=results(fin,'M').stand[0].team,cw=results(fin,'W').stand[0].team;
+  const rm=ranking(2026,'M').slice(0,3),rw=ranking(2026,'W').slice(0,3),lead=titleLeaders('all')[0];
+  return `<section class="hero"><div class="court" aria-hidden="true"></div>
+     <div class="hero-main"><div class="eyebrow-l">Σεζόν 2027</div><h1>Πανελλήνιο Πρωτάθλημα Beach Volley</h1>
+       <p>${UPC.length} τουρνουά, ${MEN.length+WOMEN.length} αθλητές και νέο σύστημα βαθμολογίας με τα 3 καλύτερα αποτελέσματα κάθε αθλητή.</p>
+       <div class="row"><button class="btn" data-act="tab" data-id="calendar">Πρόγραμμα 2027</button><button class="btn hero-ghost" data-act="login">Σύνδεση για δήλωση</button></div></div>
+     <div class="next"><div class="lbl">Επόμενο τουρνουά</div><b>${esc(nx.name)}</b><span class="meta">${drange(nx.start,nx.end)} · ${esc(nx.venue.split(',')[0])}</span>
+       <div class="count"><strong>${days}</strong>μέρες</div>
+       ${st==='open'?`<span class="chip good">Δηλώσεις έως ${dtime(nx.regClose)}</span>`:`<span class="chip">Δηλώσεις από ${dtime(nx.regOpen)}</span>`}</div></section>
+   <div class="grid2">
+     <div class="card"><div class="panel-h">Πρωταθλητές Finals 2026 <button class="lnk" data-act="tab" data-id="pantheon">Πάνθεον →</button></div>
+       ${[['Άνδρες',cm],['Γυναίκες',cw]].map(([l,tm])=>`<div class="champ"><span class="ico sun">${ICON.trophy}</span><div><small>${l}</small>${lnk(tm.a,true)} / ${lnk(tm.b,true)}</div></div>`).join('')}</div>
+     <div class="card"><div class="panel-h">Κορυφή βαθμολογίας 2026 <button class="lnk" data-act="tab" data-id="ranking">Όλη η βαθμολογία →</button></div>
+       <div class="mini-rank">${[['Άνδρες',rm],['Γυναίκες',rw]].map(([l,arr])=>`<div><small>${l}</small>${arr.map(r=>`<div class="mr"><span class="medal ${['g','s','b'][r.rank-1]||'s'}">${r.rank}</span>${lnk(r.a,true)}<b class="num">${fmt(r.total)}</b></div>`).join('')}</div>`).join('')}</div></div>
+   </div>
+   <h2 class="sec">Πρόσφατα αποτελέσματα <span class="count">Σεζόν 2026</span></h2>
+   <div class="grid">${PAST.filter(t=>t.season===2026).slice().reverse().map(resultCard).join('')}</div>
+   ${lead?`<button class="pan-banner" data-act="tab" data-id="pantheon"><span class="ico sun">${ICON.pantheon}</span><span class="txt"><b>Πάνθεον</b>${esc(lead.a.name)} έχει τους περισσότερους τίτλους: ${lead.n}. Δες πρωταθλητές ανά χρονιά και ρεκόρ.</span><span class="arr">→</span></button>`:''}${homeExtras()}`;
+}
+function vCalendar(){
+  return `<div class="head"><div><h1 class="page">Πρόγραμμα 2027</h1><p class="sub">Οι δηλώσεις γίνονται από τους αθλητές μέσα στην εφαρμογή, μαζί με τον συμπαίκτη τους.</p></div><button class="btn" data-act="login">Σύνδεση για δήλωση</button></div>
+   <div class="card">${UPC.map(t=>{const st=regStatus(t),d=pd(t.start);
+     const act=st==='open'?`<span class="chip good">Ανοιχτές δηλώσεις</span><span class="muted" style="font-size:13px">έως ${dtime(t.regClose)}</span>`:st==='soon'?`<span class="chip">Ανοίγουν ${dtime(t.regOpen)}</span>`:`<span class="chip warn">Έκλεισαν</span>`;
+     return `<div class="trow"><div class="datebox ${tcls(t)}"><b>${d.getDate()}</b><span>${MS[d.getMonth()]}</span></div>
+       <div style="min-width:0"><h3>${esc(t.name)} <span class="tag ${tcls(t)}" style="margin-left:4px">${t.type} ×${t.coef}</span></h3>
+       <div class="meta">${drange(t.start,t.end)} · ${esc(t.venue)}</div><div class="meta">${t.cats.map(catL).join(' & ')} · ${t.minAge}+ · κύριο ταμπλό ${t.main} ομάδες</div></div>
+       <div class="act"><button class="iconbtn" data-act="addCal" data-id="${t.id}" title="Προσθήκη στο ημερολόγιο" aria-label="Προσθήκη στο ημερολόγιο">${ICON.calendar}</button>${act}</div></div>`;}).join('')}</div>`;
+}
+function rankRows(){
+  if(S.rankG[0]==='J')return juniorRows();
+  const q=S.q.rank.trim().toLowerCase(),rows=ranking(S.rankS,S.rankG).filter(r=>!q||r.a.name.toLowerCase().includes(q));
+  return rows.map(r=>`<tr><td class="place">${r.rank<=3?medal(r.rank):r.rank}</td><td>${lnk(r.a,true)}<small class="muted" style="display:block;font-size:12px">${r.played} τουρνουά</small></td>
+    <td><div class="rc">${r.best.map(b=>`<span class="rchip" title="${esc(b.t.name)}">${SHORTT[b.t.id.slice(0,2)]} · ${b.place}η · <b>${b.pts}</b></span>`).join('')}</div></td><td class="r"><b class="num">${fmt(r.total)}</b></td></tr>`).join('')
+    ||`<tr><td colspan="4" class="muted">Κανένας αθλητής με αυτό το όνομα.</td></tr>`;
+}
+function vRanking(){
+  return `<div class="head"><div><h1 class="page">Βαθμολογία</h1><p class="sub">Άθροισμα των 3 καλύτερων αποτελεσμάτων κάθε αθλητή στη σεζόν.</p></div>
+     <div class="toolbar"><div class="seg" role="group" aria-label="Σεζόν">${[2026,2025].map(y=>`<button data-act="rankS" data-id="${y}" aria-pressed="${S.rankS===y}">${y}</button>`).join('')}</div>
+     <div class="seg" role="group" aria-label="Κατηγορία">${[['M','Άνδρες'],['W','Γυναίκες'],['JB','U19 Αγόρια'],['JG','U19 Κορίτσια']].map(([g,l])=>`<button data-act="setg" data-key="rankG" data-id="${g}" aria-pressed="${S.rankG===g}">${l}</button>`).join('')}</div></div></div>
+   <label class="searchbox">${ICON.athletes}<input data-pq="rank" value="${esc(S.q.rank)}" placeholder="Αναζήτηση αθλητή" aria-label="Αναζήτηση αθλητή"></label>
+   <div class="card tscroll"><table class="tbl rankt"><thead><tr><th>Θέση</th><th>Αθλητής</th><th>Αποτελέσματα που μετράνε</th><th class="r">Βαθμοί</th></tr></thead><tbody id="rank-list">${rankRows()}</tbody></table></div>`;
+}
+function athCards(){
+  const q=S.q.ath.trim().toLowerCase(),st=stats();
+  const list=[...MEN,...WOMEN].filter(a=>S.athG==='all'||a.g===S.athG).filter(a=>!q||a.name.toLowerCase().includes(q)).map(a=>({a,r:rankOf(a)})).sort((x,y)=>x.r.rank-y.r.rank||(x.a.g<y.a.g?-1:1));
+  return list.map(({a,r})=>{const t=(st[a.id]||{titles:0}).titles;
+    return `<button class="acard" data-act="openA" data-id="${a.id}"><span class="av ${a.g==='M'?'blue':'violet'}">${a.first[0]}${a.last[0]}</span>
+      <span class="t"><b>${esc(a.name)}</b><small>${a.g==='M'?'Άνδρες':'Γυναίκες'} · #${r.rank} · ${fmt(r.total)} βαθμοί</small></span>${t?`<span class="tchip">${ICON.trophy}${t}</span>`:''}</button>`;}).join('')
+    ||'<div class="card empty">Κανένας αθλητής με αυτό το όνομα.</div>';
+}
+function vAthletes(){
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Αθλητές</h1><p class="sub">Προφίλ, στατιστικά και ιστορικό κάθε αθλητή.</p></div>
+     <div class="seg" role="group" aria-label="Κατηγορία">${[['all','Όλοι'],['M','Άνδρες'],['W','Γυναίκες']].map(([k,l])=>`<button data-act="athG" data-id="${k}" aria-pressed="${S.athG===k}">${l}</button>`).join('')}</div></div>
+   <label class="searchbox">${ICON.athletes}<input data-pq="ath" value="${esc(S.q.ath)}" placeholder="Αναζήτηση αθλητή" aria-label="Αναζήτηση αθλητή"></label>
+   <div class="agrid" id="ath-list">${athCards()}</div>`;
+}
+function vProfile(){
+  const a=ATH[S.openA],s=stats()[a.id]||{res:[],titles:0,pods:0,w:0,l:0,fin:0,finYears:[]},R=rankOf(a);
+  const team=TEAMS[a.g].find(t=>t.a.id===a.id||t.b.id===a.id),partner=team?(team.a.id===a.id?team.b:team.a):null;
+  const hist=s.res.slice().sort((x,y)=>pd(y.t.start)-pd(x.t.start)),best=hist.length?Math.min(...hist.map(h=>h.place)):null,pct=s.w+s.l?Math.round(s.w*100/(s.w+s.l)):0;
+  const tile=(ic,c,l,v,sub)=>`<div class="card tile"><span class="ico ${c}">${ic}</span><small>${l}</small><b>${v}</b><em>${sub}</em></div>`;
+  return `<button class="btn quiet back" data-act="closeA">← Πίσω</button>
+   <div class="prof"><div class="av big ${a.g==='M'?'blue':'violet'}">${a.first[0]}${a.last[0]}</div>
+     <div style="min-width:0">${phaseNote(3)}<h1 class="page">${esc(a.name)}</h1><p class="sub">${a.g==='M'?'Άνδρες':'Γυναίκες'} · γ. ${a.born}${partner?` · συμπαίκτης: ${lnk(partner,true)}`:''}</p></div></div>
+   <div class="tiles">
+     ${tile(ICON.ranking,'blue','Βαθμοί 2026',fmt(R.total),`#${R.rank} στην κατάταξη`)}
+     ${tile(ICON.trophy,'sun','Τίτλοι',s.titles,s.fin?`${s.fin} Finals (${s.finYears.sort().join(', ')})`:'χωρίς τίτλο Finals')}
+     ${tile(ICON.star,'violet','Βάθρα',s.pods,`σε ${hist.length} τουρνουά`)}
+     ${tile(ICON.schedule,'teal','Νίκες τελικής φάσης',`${s.w}–${s.l}`,`${pct}% νίκες`)}
+     ${tile(ICON.calendar,'blue','Καλύτερη θέση',best?best+'η':'–',`2025–2026`)}
+   </div>
+   <div class="card tscroll"><div class="panel-h">Ιστορικό αποτελεσμάτων <span>Βαθμοί ανά αθλητή</span></div>
+   <table class="tbl stack" style="min-width:560px"><thead><tr><th>Τουρνουά</th><th>Συμπαίκτης</th><th>Θέση</th><th class="r">Βαθμοί</th></tr></thead><tbody>
+     ${hist.map(h=>`<tr><td><button class="lnk" data-act="goT" data-id="${h.t.id}"><b>${esc(h.t.name)} ${h.t.season}</b></button><small class="muted" style="display:block">${drange(h.t.start,h.t.end)}</small></td>
+       <td data-l="Συμπαίκτης">${lnk(h.partner,true)}</td><td data-l="Θέση" class="place">${medal(h.place)}${PLR[h.place]?`<small>${PLR[h.place]}</small>`:''}</td><td data-l="Βαθμοί" class="r num">${fmt(h.pts)}</td></tr>`).join('')}
+   </tbody></table></div>`;
+}
+function vPantheon(){
+  const st=stats(),all=Object.values(ATH);
+  const most=titleLeaders('all')[0],pod=all.map(a=>({a,n:(st[a.id]||{pods:0}).pods})).sort((x,y)=>y.n-x.n)[0];
+  const win=all.map(a=>{const o=st[a.id]||{w:0,l:0};return {a,n:o.w+o.l>=6?o.w/(o.w+o.l):0,w:o.w,l:o.l};}).sort((x,y)=>y.n-x.n)[0];
+  const leaders=g=>titleLeaders(g).slice(0,5).map((x,i)=>`<div class="lead-row"><span class="rk">${i+1}</span>${lnk(x.a,true)}<span class="n">${ICON.trophy}${x.n}</span></div>`).join('')||'<div class="empty">Χωρίς τίτλους ακόμα.</div>';
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Πάνθεον</h1><p class="sub">Πρωταθλητές, τίτλοι και ρεκόρ του θεσμού.</p></div></div>
+   <div class="kpis">
+     <div class="card rec"><span class="ico sun">${ICON.trophy}</span><div><small>Περισσότεροι τίτλοι</small><b>${most.n}</b>${lnk(most.a,true)}</div></div>
+     <div class="card rec"><span class="ico violet">${ICON.star}</span><div><small>Περισσότερα βάθρα</small><b>${pod.n}</b>${lnk(pod.a,true)}</div></div>
+     <div class="card rec"><span class="ico teal">${ICON.ranking}</span><div><small>Καλύτερο ποσοστό νικών</small><b>${Math.round(win.n*100)}%</b>${lnk(win.a,true)} <span class="muted" style="font-size:12px">(${win.w}–${win.l})</span></div></div>
+   </div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="card"><div class="panel-h">Περισσότεροι τίτλοι · Άνδρες</div>${leaders('M')}</div>
+     <div class="card"><div class="panel-h">Περισσότεροι τίτλοι · Γυναίκες</div>${leaders('W')}</div>
+   </div>
+   <h2 class="sec">Πρωταθλητές Finals ανά χρονιά</h2>
+   <div class="card">${champions().map(c=>`<div class="tl"><div class="yr">${c.season}</div>
+     <div><small>Άνδρες</small>${lnk(c.M.a,true)} / ${lnk(c.M.b,true)}</div><div><small>Γυναίκες</small>${lnk(c.W.a,true)} / ${lnk(c.W.b,true)}</div></div>`).join('')}</div>`;
+}
+
+/* ---------- full vision: data ---------- */
+const FEE=40;
+const CATL={M:'Ανδρών',W:'Γυναικών',U17:'U17',U19:'U19',U21:'U21'};
+const catL=c=>CATL[c]||c;
+const tcls=t=>t.type==='Finals'?'finals':t.type==='Νέοι'?'junior':'';
+UPC.push({id:'t27j',name:'Πανελλήνιο U19',venue:'Παραλία Αγίας Τριάδας, Θεσσαλονίκη',start:'2027-07-23',end:'2027-07-25',regOpen:'2027-05-15T10:00',regClose:'2027-07-12T20:00',type:'Νέοι',coef:0.5,cats:['U19'],main:12,direct:8,wc:2,qual:8,minAge:14,minBorn:2008,admin:'Ρένα Μαργαρίτη'});
+UPC.sort((a,b)=>pd(a.start)-pd(b.start));
+const dshort=s=>{const d=pd(s);return `${d.getDate()} ${MG[d.getMonth()]} ${d.getFullYear()}`;};
+let NEWS=[
+ {id:'n1',date:'2027-05-10',cat:'Ανακοίνωση',title:'Άνοιξαν οι δηλώσεις για το Masters Θεσσαλονίκης',text:'Οι δηλώσεις για το πρώτο Masters της σεζόν 2027 είναι ανοιχτές έως την Τρίτη 1 Ιουνίου στις 20:00. Δηλώνεις μαζί με τον συμπαίκτη σου μέσα από την εφαρμογή, και η δήλωση ολοκληρώνεται όταν αποδεχτεί.'},
+ {id:'n2',date:'2027-04-28',cat:'Κανονισμοί',title:'Νέο σύστημα βαθμολογίας από τη σεζόν 2027',text:'Από τη νέα σεζόν μετράνε τα 3 καλύτερα αποτελέσματα κάθε αθλητή, με κοινή κλίμακα για όλα τα τουρνουά και συντελεστή ανά είδος τουρνουά.'},
+ {id:'n3',date:'2027-04-15',cat:'Νέοι',title:'Πανελλήνιο U19 τον Ιούλιο στη Θεσσαλονίκη',text:'Το Πανελλήνιο U19 γίνεται στις 23–25 Ιουλίου στην Αγία Τριάδα, με δική του βαθμολογία για αγόρια και κορίτσια.'},
+ {id:'n4',date:'2027-03-30',cat:'Χορηγοί',title:'Η Kymata Water μεγάλος χορηγός της σεζόν',text:'Η Kymata Water στηρίζει το πρωτάθλημα για τη σεζόν 2027 και θα είναι παρούσα σε όλα τα Masters και στα Finals.'},
+];
+const SPONSORS=[{name:'KYMATA WATER',c:'#19C3FF',lvl:'Μεγάλος χορηγός'},{name:'AMMOS SPORTS',c:'#F5B400',lvl:'Χορηγός'},{name:'ILIOS ENERGY',c:'#FF6A2B',lvl:'Χορηγός'},{name:'DELFINI TRAVEL',c:'#0E8A7E',lvl:'Υποστηρικτής'}];
+const REFS=[{name:'Κ. Παπαναστασίου',lvl:'Εθνικός',days:['Παρ','Σάβ','Κυρ']},{name:'Μ. Ιωαννίδου',lvl:'Εθνική',days:['Σάβ','Κυρ']},{name:'Γ. Τσιρίδης',lvl:'Περιφερειακός',days:['Παρ','Σάβ']},{name:'Ε. Καλλέργη',lvl:'Περιφερειακή',days:['Σάβ','Κυρ']},{name:'Δ. Μουρατίδης',lvl:'Εθνικός',days:['Παρ','Σάβ','Κυρ']}];
+MATCHES.forEach((m,i)=>m.ref=i%REFS.length);
+let POSTS=[
+ {id:'pp1',ath:'M22',t:'t27a',note:'Ψάχνω μπλοκέρ για τη Θεσσαλονίκη, παίζω αριστερά.',when:'Σήμερα'},
+ {id:'pp2',ath:'M17',t:'t27b',note:'Διαθέσιμος για Ίο και Μαραθώνα, με εμπειρία σε Masters.',when:'Χθες'},
+ {id:'pp3',ath:'M26',t:'t27a',note:'Πρώτη χρονιά στα Masters, ψάχνω έμπειρο συμπαίκτη.',when:'Πριν 2 μέρες'},
+ {id:'pp4',ath:'M11',t:'t27b',note:'Ο συμπαίκτης μου τραυματίστηκε, ψάχνω για την Ίο.',when:'Πριν 3 μέρες'},
+];
+const NOTIFS=[
+ {ico:'mail',c:'blue',title:'Νέα πρόσκληση',text:`${ATH.M9.name} σε προσκάλεσε στο Masters Ίου.`,when:'Πριν 2 ώρες',unread:true},
+ {ico:'lists',c:'sun',title:'Ανέβηκες από τη λίστα αναμονής',text:'Masters Ίου 2027: μια ομάδα αποσύρθηκε και η ομάδα σου πέρασε από τις αναπληρωματικές στα προκριματικά.',when:'Χθες',unread:true},
+ {ico:'gallery',c:'violet',title:'Νέες φωτογραφίες σου',text:'Υπάρχουν φωτογραφίες σου από τα Finals Αθήνας 2026 στη γκαλερί.',when:'Πριν 2 μέρες',unread:false},
+ {ico:'alert',c:'sun',title:'Η κάρτα υγείας λήγει σε 41 μέρες',text:'Ανέβασε νέα κάρτα πριν τις 30 Ιουνίου 2027.',when:'Πριν 3 μέρες',unread:false},
+];
+let AUDIT=[
+ {when:'Σήμερα 10:42',who:'Αλέξης Κωνσταντίνου',role:'tadmin',what:'Καταχώριση σκορ',det:'Masters Θεσσαλονίκης · 09:50 Γήπεδο 3 · 2–1'},
+ {when:'Σήμερα 09:15',who:'Γραμματεία',role:'super',what:'Έγκριση αθλητή',det:'Αίτημα σύνδεσης λογαριασμού με το μητρώο'},
+ {when:'Χθες 18:30',who:'Γραμματεία',role:'super',what:'Δημοσίευση λίστας',det:'Masters Ίου 2027 · Γυναίκες'},
+ {when:'Χθες 12:02',who:'Ρένα Μαργαρίτη',role:'tadmin',what:'Διόρθωση σκορ',det:'Masters Ίου 2026 · Ημιτελικός · 21–19 → 21–17'},
+ {when:'10 Μαΐου 10:00',who:'Σύστημα',role:'sys',what:'Άνοιγμα δηλώσεων',det:'Masters Θεσσαλονίκης 2027 (αυτόματα)'},
+];
+const RC={super:'violet',tadmin:'teal',athlete:'blue',photo:'sun',sys:'gray',visitor:'gray'};
+function logA(what,det){const d=new Date(),who={tadmin:'Αλέξης Κωνσταντίνου',photo:'Λευτέρης Ανδρέου',athlete:ATH[ME].name}[S.role]||'Γραμματεία';AUDIT.unshift({when:`Τώρα ${p2(d.getHours())}:${p2(d.getMinutes())}`,who,role:S.role,what,det});}
+const REG26={th26:{M:22,W:18},io26:{M:20,W:16},ma26:{M:24,W:19},fi26:{M:16,W:16}};
+/* juniors (U19) ranking sample */
+const JUN=(()=>{const mk=(F,SN,seed)=>{const r=rng(seed);return SN.map((sn,i)=>{const pl=[1,2,3,4,5,9,13][Math.floor(r()*7)],pl2=[1,2,3,5,9,13][Math.floor(r()*6)];
+  const best=[{t:'U19 Θεσ/νίκη',place:pl,pts:Math.ceil(SCALE[pl]*2.5)},{t:'U19 Αθήνα',place:pl2,pts:Math.ceil(SCALE[pl2]*2.5)}].sort((a,b)=>b.pts-a.pts);
+  return {name:F[i]+' '+sn,born:2008+Math.floor(r()*3),best,total:best[0].pts+best[1].pts};}).sort((a,b)=>b.total-a.total);};
+ return {JB:mk(['Άγγελος','Οδυσσέας','Ραφαήλ','Μάριος','Ορέστης','Λουκάς','Στάθης','Φώτης','Αλέξης','Ζήσης','Κλεάνθης','Ηρακλής'],['Καραγιάννης','Λιόλιος','Μπαλτάς','Παπαδόπουλος','Σιδηρόπουλος','Τσολάκης','Χριστοδούλου','Αποστόλου','Γιαννακός','Δημητρίου','Ζαχαράκης','Κωστόπουλος'],501),
+         JG:mk(['Αρετή','Ραφαέλα','Κωνσταντίνα','Μελίνα','Ηλέκτρα','Θεοδώρα','Ευτυχία','Δήμητρα','Νίκη','Αθηνά','Στέλλα','Ιφιγένεια'],['Καραγιάννη','Λιόλιου','Μπαλτά','Παπαδοπούλου','Σιδηροπούλου','Τσολάκη','Χριστοδούλου','Αποστόλου','Γιαννακού','Δημητρίου','Ζαχαράκη','Κωστοπούλου'],502)};})();
+function juniorRows(){const q=S.q.rank.trim().toLowerCase();let rk=0,prev=null;
+  return JUN[S.rankG].map((r,i)=>{if(r.total!==prev){rk=i+1;prev=r.total;}return {...r,rank:rk};}).filter(r=>!q||r.name.toLowerCase().includes(q)).map(r=>`<tr><td class="place">${r.rank<=3?medal(r.rank):r.rank}</td><td><b style="font-weight:600">${esc(r.name)}</b><small class="muted" style="display:block;font-size:12px">γ. ${r.born} · 2 τουρνουά</small></td>
+    <td><div class="rc">${r.best.map(b=>`<span class="rchip">${b.t} · ${b.place}η · <b>${b.pts}</b></span>`).join('')}</div></td><td class="r"><b class="num">${fmt(r.total)}</b></td></tr>`).join('')||`<tr><td colspan="4" class="muted">Κανένας αθλητής με αυτό το όνομα.</td></tr>`;}
+/* gallery */
+function photoSVG(seed){const r=rng(seed),h=195+Math.floor(r()*25),sea=190+Math.floor(r()*15),sand=36+Math.floor(r()*8),bx=20+r()*120,by=10+r()*28,p1=25+r()*40,p2=95+r()*40,id='g'+seed;
+  const pl=(x,c)=>`<g fill="${c}"><circle cx="${x}" cy="${66+r()*6}" r="4.2"/><rect x="${x-4}" y="${71+r()*5}" width="8" height="18" rx="3"/></g>`;
+  return `<svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="hsl(${h},70%,${62+r()*12}%)"/><stop offset="1" stop-color="hsl(${h},60%,86%)"/></linearGradient></defs>
+    <rect width="160" height="120" fill="url(#${id})"/><rect y="58" width="160" height="14" fill="hsl(${sea},62%,${42+r()*10}%)"/><rect y="70" width="160" height="50" fill="hsl(${sand},58%,${70+r()*10}%)"/>
+    <line x1="80" y1="40" x2="80" y2="92" stroke="#F4F4F4" stroke-width="1.4"/><rect x="40" y="46" width="80" height="9" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 1.5"/>
+    ${pl(p1,'#1B2A44')}${pl(p2,'#7A2E1B')}<circle cx="${bx}" cy="${by}" r="4.5" fill="#F5C842" stroke="#2F6FEB" stroke-width="1"/></svg>`;}
+const ALB={};
+function album(t){if(ALB[t.id])return ALB[t.id];const r=rng(hash(t.id+'ph')),ms=[...results(t,'M').matches.slice(0,5),...results(t,'W').matches.slice(0,5)];
+  const photos=ms.map((m,i)=>({id:t.id+'p'+i,seed:hash(t.id)%100000+i*97,team:r()<.5?m.a:m.b}));
+  const myT=TEAMS.M.find(x=>x.a.id===ME||x.b.id===ME);photos.splice(1,0,{id:t.id+'pme1',seed:hash(t.id)%100000+777,team:myT});photos.splice(6,0,{id:t.id+'pme2',seed:hash(t.id)%100000+911,team:myT});
+  return ALB[t.id]={t,photos};}
+function findPhoto(id){for(const A of Object.values(ALB)){const p=A.photos.find(x=>x.id===id);if(p)return {A,p};}}
+const inPhoto=(p,id)=>p.team&&(p.team.a.id===id||p.team.b.id===id);
+const mineSeg=m=>`<div class="seg" role="group" aria-label="Φίλτρο"><button data-act="galMine" data-id="1" aria-pressed="${m}">Με εμένα</button><button data-act="galMine" data-id="0" aria-pressed="${!m}">Όλες</button></div>`;
+function qrSVG(seed){const r=rng(seed),n=21;let c='';for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12))continue;if(r()<.46)c+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;}
+  const fin=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#FFFFFF"/><rect x="${x+2}" y="${y+2}" width="3" height="3"/>`;
+  return `<svg class="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" fill="#0B0D12" role="img" aria-label="Κωδικός QR">${fin(0,0)}${fin(14,0)}${fin(0,14)}${c}</svg>`;}
+let CHECK=null;
+function checkin(){if(CHECK)return CHECK;CHECK=[...TEAMS.M.slice(0,10).map(t=>({t,g:'M'})),...TEAMS.W.slice(0,10).map(t=>({t,g:'W'}))];CHECK.forEach((c,i)=>{c.at=(i%3!==2&&i<15)?`08:${p2(5+i*2)}`:null;});return CHECK;}
+const newsCard=n=>`<button class="news-card" data-act="readNews" data-id="${n.id}"><div class="row" style="justify-content:space-between"><span class="chip plain info">${esc(n.cat)}</span><small>${dshort(n.date)}</small></div><h3>${esc(n.title)}</h3><p>${esc(n.text.length>130?n.text.slice(0,130)+'…':n.text)}</p></button>`;
+const sponsorsHTML=()=>`<div class="sponsors">${SPONSORS.map(s=>`<div class="spons" title="${esc(s.lvl)}"><i style="background:${s.c}"></i>${esc(s.name)}</div>`).join('')}</div>`;
+function medAlert(){return S.medOk?'':`<div class="alert"><span class="ico" style="background:var(--surface);color:var(--warn)">${ICON.alert}</span><div class="t"><b>Η κάρτα υγείας σου λήγει στις 30 Ιουνίου 2027 <span class="ptg">Φάση 3</span></b><span>Ανέβασε τη νέα κάρτα, για να μπορείς να αγωνιστείς και μετά από αυτή την ημερομηνία.</span></div><button class="btn sm" data-act="medUp">Ανέβασμα νέας κάρτας</button></div>`;}
+function homeExtras(){return `<h2 class="sec">Νέα <span class="ptg">Φάση 3</span></h2><div class="grid2">${NEWS.slice(0,2).map(newsCard).join('')}</div>
+  <h2 class="sec">Με την υποστήριξη <span class="ptg">Φάση 3</span></h2>${sponsorsHTML()}
+  <div class="callout" style="margin-top:18px"><span class="ico blue" style="background:var(--surface)">${ICON.upload}</span><div class="t"><b>Το Beach Volley Hub στο κινητό σου <span class="ptg">Φάση 3</span></b><span>Εγκατάσταση με ένα πάτημα, με ειδοποιήσεις για προσκλήσεις, λίστες και αγώνες.</span></div><button class="btn sm" data-act="install">Εγκατάσταση</button></div>`;}
+
+/* ---------- full vision: pages ---------- */
+function vNews(){
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Νέα</h1><p class="sub">Ανακοινώσεις της ΕΟΠΕ για τη σεζόν, τους κανονισμούς και τους χορηγούς.</p></div></div>
+   <div class="grid2">${NEWS.map(newsCard).join('')}</div>
+   <h2 class="sec">Χορηγοί του πρωταθλήματος</h2>${sponsorsHTML()}`;
+}
+function vGallery(){
+  const ath=S.role==='athlete',mine=ath&&S.galMine!==false,albums=PAST.filter(t=>t.season===2026).slice().reverse().map(album);
+  if(S.openAlb){const A=album(PAST.find(t=>t.id===S.openAlb)),ph=A.photos.filter(p=>!mine||inPhoto(p,ME));
+    return `<button class="btn quiet back" data-act="closeAlb">← Όλα τα άλμπουμ</button>
+     <div class="head"><div>${phaseNote(3)}<h1 class="page">${A.t.name} ${A.t.season}</h1><p class="sub">${A.photos.length} φωτογραφίες · ${drange(A.t.start,A.t.end)} · Φωτογράφος: Λευτέρης Ανδρέου</p></div>${ath?mineSeg(mine):''}</div>
+     <div class="pgrid">${ph.map(p=>`<button class="photo" data-act="photo" data-id="${p.id}" aria-label="Φωτογραφία">${photoSVG(p.seed)}<span class="cap">${p.team?tl(p.team):''}</span></button>`).join('')||'<div class="card empty">Δεν υπάρχουν φωτογραφίες σου σε αυτό το άλμπουμ.</div>'}</div>`;}
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">${ath?'Οι φωτογραφίες μου':'Γκαλερί'}</h1><p class="sub">${ath?'Φωτογραφίες από τους αγώνες σου, έτοιμες για λήψη και για τα social media σου.':'Φωτογραφίες από κάθε τουρνουά, επισημασμένες ανά αθλητή και ομάδα.'}</p></div>${ath?mineSeg(mine):''}</div>
+   <div class="grid">${albums.map(A=>{const n=mine?A.photos.filter(p=>inPhoto(p,ME)).length:A.photos.length;return `<button class="album" data-act="openAlb" data-id="${A.t.id}"><span class="photo">${photoSVG(A.photos[0].seed)}</span><b>${A.t.name} ${A.t.season}</b><small>${n} φωτογραφίες${mine?' με εσένα':''} · ${drange(A.t.start,A.t.end)}</small></button>`;}).join('')}</div>`;
+}
+function vUpload(){
+  const t=PAST.find(x=>x.id===S.upAlb),teams=[...results(t,'M').stand,...results(t,'W').stand].map(x=>x.team),tot=PAST.filter(x=>x.season===2026).reduce((n,x)=>n+album(x).photos.length,0);
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Ανέβασμα φωτογραφιών</h1><p class="sub">Οι φωτογραφίες μπαίνουν στη γκαλερί του τουρνουά και στις γκαλερί των αθλητών που επισημαίνεις.</p></div></div>
+   <div class="kpis"><div class="card kpi"><span class="ico sun">${ICON.gallery}</span><div class="stat"><small>Φωτογραφίες σεζόν 2026</small><b>${tot}</b></div></div>
+     <div class="card kpi"><span class="ico blue">${ICON.upload}</span><div class="stat" style="flex:1"><small>Χώρος αποθήκευσης</small><b>2,4 GB</b><div class="meter" style="margin:6px 0 4px"><i style="width:24%"></i></div><small>από 10 GB</small></div></div></div>
+   <div class="card pad" style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
+     <div class="field"><label for="up_alb">Άλμπουμ</label><select id="up_alb" class="input" data-up="1">${PAST.filter(x=>x.season===2026).map(x=>`<option value="${x.id}" ${x.id===S.upAlb?'selected':''}>${x.name} ${x.season}</option>`).join('')}</select></div>
+     <button class="drop" data-act="addFiles">${ICON.upload}<b>Σύρε φωτογραφίες εδώ ή πάτησε για επιλογή</b>JPG ή HEIC, έως 25 MB η καθεμία</button>
+     ${S.upQueue.length?`<div class="pgrid">${S.upQueue.map((q,i)=>`<div class="card" style="padding:8px;display:flex;flex-direction:column;gap:6px"><span class="photo">${photoSVG(q.seed)}</span>
+       <label class="hint" for="tg${i}">Ποιοι είναι στη φωτογραφία</label><select id="tg${i}" class="input" data-tag="${i}"><option value="">Χωρίς επισήμανση</option>${teams.map(tm=>`<option value="${tm.id}" ${q.team&&q.team.id===tm.id?'selected':''}>${tl(tm)}</option>`).join('')}</select>
+       <button class="btn quiet sm" data-act="rmFile" data-id="${i}">Αφαίρεση</button></div>`).join('')}</div>
+       <div class="row" style="justify-content:flex-end"><button class="btn" data-act="publishPhotos">Δημοσίευση ${S.upQueue.length} φωτογραφιών</button></div>`:''}
+   </div>`;
+}
+function vPartners(){
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Ψάχνω συμπαίκτη</h1><p class="sub">Αθλητές χωρίς ομάδα για τα επόμενα τουρνουά. Στείλε πρόσκληση με ένα πάτημα.</p></div><button class="btn" data-act="newPost">${ICON.plus} Νέα αγγελία</button></div>
+   <div class="card">${POSTS.map(p=>{const a=ATH[p.ath],t=UPC.find(x=>x.id===p.t),own=p.ath===ME;
+     return `<div class="post"><span class="av blue">${a.first[0]}${a.last[0]}</span><div class="txt"><b>${lnk(a,true)} <span class="muted" style="font-weight:400;font-size:13px">· ${fmt(a.pts)} βαθμοί</span></b><span>${esc(p.note)}</span>
+       <div class="row" style="margin-top:6px;gap:6px"><span class="chip plain info">${esc(t.name)}</span><small>${p.when}</small></div></div>
+       ${own?`<button class="btn danger sm" data-act="delPost" data-id="${p.id}">Διαγραφή</button>`:`<button class="btn sm" data-act="invitePost" data-id="${p.id}">Πρόσκληση</button>`}</div>`;}).join('')}</div>`;
+}
+function drawData(g){
+  const t=UPC[0],L=entryList(g),nQ=t.main-t.direct-t.wc,main=[...L.direct,...L.wcT,...L.qual.slice(0,nQ)].slice(0,12).sort((a,b)=>tp(b)-tp(a));
+  const pat=[0,1,2,3,3,2,1,0,0,1,2,3],pools=[[],[],[],[]];main.forEach((tm,i)=>pools[pat[i]].push({tm,seed:i+1}));
+  const r=rng(hash('draw'+g)),play=(a,b)=>{const aw=a.seed<b.seed?r()<.75:r()<.3;return {a,b,aw,sets:setsFor(r,aw)};},w=m=>m.aw?m.a:m.b;
+  const qf=[[pools[0][0],pools[1][1]],[pools[2][0],pools[3][1]],[pools[1][0],pools[0][1]],[pools[3][0],pools[2][1]]].map(([a,b])=>play(a,b));
+  const sf1=play(w(qf[0]),w(qf[1]));
+  return {pools,qf,sf1,sf2:{a:w(qf[2]),b:w(qf[3])},fin:{a:w(sf1),b:null}};
+}
+function bmBox(m,label){
+  if(!m.sets)return `<div class="bm2">${label?`<div class="lbl">${label}</div>`:''}<div><span>${m.a?tl(m.a.tm):'—'}</span><b></b></div><div class="${m.b?'':'tbd'}"><span>${m.b?tl(m.b.tm):'Νικητής 2ου ημιτελικού'}</span><b></b></div></div>`;
+  const sa=m.sets.filter(x=>x[0]>x[1]).length,sb=m.sets.length-sa;
+  return `<div class="bm2"><div class="${m.aw?'w':''}"><span>#${m.a.seed} ${tl(m.a.tm)}</span><b>${sa}</b></div><div class="${m.aw?'':'w'}"><span>#${m.b.seed} ${tl(m.b.tm)}</span><b>${sb}</b></div></div>`;
+}
+function vDraw(){
+  const g=S.drawG,t=UPC[0],seg=`<div class="seg" role="group" aria-label="Κατηγορία">${gBtns(g,'drawG')}</div>`;
+  const head=`<div class="head"><div><h1 class="page">Ταμπλό</h1><p class="sub">${t.name} 2027 · κύριο ταμπλό 12 ομάδων: 4 όμιλοι των 3 και νοκ-άουτ</p></div><div class="row">${S.drawn[g]?`<button class="btn ghost sm" data-act="mkDraw">Ξαναδημιουργία</button>`:''}${seg}</div></div>`;
+  if(!S.drawn[g])return head+`<div class="banner info"><span class="grow">Το ταμπλό δημιουργείται αυτόματα από τη λίστα συμμετοχής, με κατανομή στους ομίλους με βάση τους βαθμούς.</span><button class="btn sm" data-act="mkDraw">Δημιουργία ταμπλό</button></div>`;
+  const D=drawData(g);
+  return head+`<h2 class="sec" style="margin-top:0">Όμιλοι</h2><div class="pools">${D.pools.map((pool,i)=>`<div class="card"><div class="panel-h">Όμιλος ${'ABCD'[i]} <span>Νίκες–ήττες</span></div>${pool.map((p,j)=>`<div class="lead-row"><span class="rk">#${p.seed}</span><span style="flex:1;min-width:0">${tl(p.tm)}</span><span class="chip plain ${j<2?'good':''}">${['2–0','1–1','0–2'][j]}</span></div>`).join('')}</div>`).join('')}</div>
+   <h2 class="sec">Νοκ-άουτ</h2><div class="card pad tscroll"><div class="bracket">
+     <div class="bcol"><h4>Προημιτελικά</h4>${D.qf.map(m=>bmBox(m)).join('')}</div>
+     <div class="bcol"><h4>Ημιτελικά</h4>${bmBox(D.sf1)}${bmBox(D.sf2,'Σε εξέλιξη · Γήπεδο 1')}</div>
+     <div class="bcol"><h4>Τελικός</h4>${bmBox(D.fin,'Κυριακή 13 Ιουνίου, 17:00')}</div></div></div>
+   <p class="hint" style="margin-top:10px">Οι νικητές περνούν αυτόματα στον επόμενο γύρο μόλις καταχωρηθεί το σκορ.</p>`;
+}
+function vCheckin(){
+  const C=checkin(),n=C.filter(c=>c.at).length;
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Check-in</h1><p class="sub">${UPC[0].name} 2027 · 1η μέρα, Παρασκευή 11 Ιουνίου</p>
+     <div class="row" style="margin-top:10px;font-size:13px;font-weight:500"><span class="num">${n} από ${C.length} ομάδες είναι παρούσες</span></div><div class="progress"><i style="width:${n/C.length*100}%"></i></div></div>
+     <button class="btn" data-act="scan">${ICON.checkin} Σάρωση QR</button></div>
+   <div class="card">${C.map((c,i)=>`<div class="todo"><span class="chip plain ${c.g==='M'?'info':'violet'}">${c.g==='M'?'Άνδρες':'Γυναίκες'}</span><div class="txt"><b>${tl(c.t)}</b></div>${c.at?`<span class="chip good">Παρούσα · ${c.at}</span>`:`<span class="chip warn">Αναμένεται</span><button class="btn ghost sm" data-act="ciMan" data-id="${i}">Χειροκίνητα</button>`}</div>`).join('')}</div>`;
+}
+function vReferees(){
+  const cnt=REFS.map((_,i)=>MATCHES.filter(m=>m.ref===i).length);
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Διαιτητές</h1><p class="sub">${UPC[0].name} 2027 · Σάββατο 12 Ιουνίου</p></div></div>
+   <div class="kpis">${REFS.map((r,i)=>`<div class="card kpi"><span class="av teal">${r.name.split(' ').pop()[0]}</span><div style="min-width:0"><b style="display:block">${esc(r.name)}</b><small class="muted">${r.lvl} · ${r.days.join(', ')}</small><div style="margin-top:6px"><span class="chip plain">${cnt[i]} αγώνες σήμερα</span></div></div></div>`).join('')}</div>
+   <h2 class="sec">Ορισμοί αγώνων</h2><div class="card tscroll"><table class="tbl stack" style="min-width:620px"><thead><tr><th>Ώρα</th><th>Αγώνας</th><th>Διαιτητής</th></tr></thead><tbody>
+   ${MATCHES.map(m=>`<tr><td><b class="num">${m.time}</b><small class="muted" style="display:block">Γήπεδο ${m.court}</small></td><td data-l="Αγώνας">${tl(m.a)} – ${tl(m.b)}</td>
+     <td data-l="Διαιτητής"><select class="input" data-ref="${m.id}" aria-label="Διαιτητής αγώνα ${m.time}">${REFS.map((r,i)=>`<option value="${i}" ${m.ref===i?'selected':''}>${esc(r.name)}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`;
+}
+function vReports(){
+  const ts=PAST.filter(t=>t.season===2026),tot=ts.reduce((n,t)=>n+REG26[t.id].M+REG26[t.id].W,0),mx=Math.max(...ts.map(t=>REG26[t.id].M+REG26[t.id].W));
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Αναφορές</h1><p class="sub">Σεζόν 2026: συμμετοχές και έσοδα από παράβολα.</p></div><div class="row"><button class="btn ghost sm" data-act="export" data-id="Excel">Εξαγωγή Excel</button><button class="btn ghost sm" data-act="export" data-id="PDF">Εξαγωγή PDF</button></div></div>
+   <div class="kpis">
+     <div class="card kpi"><span class="ico blue">${ICON.mine}</span><div class="stat"><small>Ομάδες</small><b>${tot}</b></div></div>
+     <div class="card kpi"><span class="ico violet">${ICON.athletes}</span><div class="stat"><small>Συμμετοχές αθλητών</small><b>${tot*2}</b></div></div>
+     <div class="card kpi"><span class="ico teal">${ICON.reports}</span><div class="stat"><small>Έσοδα παραβόλων</small><b>€${fmt(tot*FEE)}</b></div></div>
+     <div class="card kpi"><span class="ico sun">${ICON.tournaments}</span><div class="stat"><small>Ομάδες ανά τουρνουά</small><b>${Math.round(tot/ts.length)}</b></div></div></div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="card"><div class="panel-h">Ομάδες ανά τουρνουά</div><div class="bars">${ts.map(t=>{const R=REG26[t.id];return `<div class="barrow"><span>${SHORTT[t.id.slice(0,2)]}</span><div class="bartrack"><i style="width:${R.M/mx*100}%;background:var(--accent)"></i><i style="width:${R.W/mx*100}%;background:var(--violet)"></i></div><b class="num">${R.M+R.W}</b></div>`;}).join('')}</div>
+       <div class="legend"><span><i style="background:var(--accent)"></i>Άνδρες</span><span><i style="background:var(--violet)"></i>Γυναίκες</span></div></div>
+     <div class="card tscroll"><div class="panel-h">Έσοδα ανά τουρνουά <span>€${FEE} ανά ομάδα</span></div><table class="tbl"><tbody>${ts.map(t=>{const R=REG26[t.id];return `<tr><td>${t.name}</td><td class="r num">${R.M+R.W} ομάδες</td><td class="r num"><b>€${fmt((R.M+R.W)*FEE)}</b></td></tr>`;}).join('')}</tbody></table></div>
+   </div>`;
+}
+function vContent(){
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Νέα & χορηγοί</h1><p class="sub">Ό,τι δημοσιεύεις εμφανίζεται στις δημόσιες σελίδες της εφαρμογής.</p></div></div>
+   <div class="grid2"><div class="card pad" style="display:flex;flex-direction:column;gap:12px"><b>Νέα ανακοίνωση</b>
+     <div class="field"><label for="cn_title">Τίτλος</label><input id="cn_title" class="input" placeholder="π.χ. Άνοιξαν οι δηλώσεις για το Masters Ίου"></div>
+     <div class="field"><label for="cn_cat">Κατηγορία</label><select id="cn_cat" class="input">${['Ανακοίνωση','Αποτελέσματα','Κανονισμοί','Νέοι','Χορηγοί'].map(c=>`<option>${c}</option>`).join('')}</select></div>
+     <div class="field"><label for="cn_text">Κείμενο</label><textarea id="cn_text" class="input" rows="4" placeholder="Το κείμενο της ανακοίνωσης"></textarea></div>
+     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="pubNews">Δημοσίευση</button></div></div>
+   <div class="card"><div class="panel-h">Δημοσιευμένα <span>${NEWS.length}</span></div>${NEWS.map(n=>`<div class="lead-row"><span class="chip plain info">${esc(n.cat)}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.title)}</span><small class="muted">${dshort(n.date)}</small></div>`).join('')}</div></div>
+   <h2 class="sec">Χορηγοί και θέσεις προβολής</h2><div class="card tscroll"><table class="tbl stack" style="min-width:640px"><thead><tr><th>Χορηγός</th><th>Επίπεδο</th><th>Αρχική</th><th>Αποτελέσματα</th><th>Κάρτες social</th></tr></thead><tbody>
+   ${SPONSORS.map((s,i)=>`<tr><td><div class="row" style="gap:8px;flex-wrap:nowrap"><i style="width:14px;height:14px;border-radius:4px;background:${s.c};display:inline-block"></i><b>${esc(s.name)}</b></div></td><td data-l="Επίπεδο">${s.lvl}</td>${[true,i<2,i===0].map((on,j)=>`<td data-l="${['Αρχική','Αποτελέσματα','Κάρτες social'][j]}"><label class="check"><input type="checkbox" data-spon="1" ${on?'checked':''}> Εμφάνιση</label></td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function vAudit(){
+  return `<div class="head"><div><h1 class="page">Ιστορικό αλλαγών</h1><p class="sub">Κάθε αλλαγή σε σκορ, λίστες, wild cards και τουρνουά καταγράφεται, με το ποιος την έκανε και πότε.</p></div></div>
+   <div class="card tscroll"><table class="tbl stack" style="min-width:660px"><thead><tr><th>Πότε</th><th>Χρήστης</th><th>Ενέργεια</th><th>Λεπτομέρειες</th></tr></thead><tbody>
+   ${AUDIT.map(a=>`<tr><td class="num" style="white-space:nowrap">${a.when}</td><td data-l="Χρήστης"><div class="row" style="gap:8px;flex-wrap:nowrap"><span class="av ${RC[a.role]||'gray'}" style="width:26px;height:26px;font-size:11px">${a.who.split(' ').map(w=>w[0]).join('').slice(0,2)}</span>${esc(a.who)}</div></td><td data-l="Ενέργεια"><b>${esc(a.what)}</b></td><td data-l="Λεπτομέρειες" class="muted">${esc(a.det)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------- athlete ---------- */
+function vTournamentsAthlete(){
+  const me=ATH[ME],inv=S.invites.filter(i=>i.status==='pending');
+  const rank=MEN.slice().sort((a,b)=>b.pts-a.pts).findIndex(a=>a.id===ME)+1;
+  return `<div class="head"><div><h1 class="page">Τουρνουά 2027</h1><p class="sub">Δήλωσε συμμετοχή μαζί με τον συμπαίκτη σου. Η δήλωση ολοκληρώνεται όταν αποδεχτεί.</p></div></div>
+   <div class="stats">
+     <div class="stat"><span class="ico blue">${ICON.star}</span><div><small>Βαθμοί εισόδου</small><b>${fmt(me.pts)}</b><em>+180 από τον Ιούνιο</em></div></div>
+     <div class="stat"><span class="ico sun">${ICON.bars}</span><div><small>Θέση κατάταξης</small><b>${rank}η</b><small>Άνδρες · ${MEN.length} αθλητές</small></div></div>
+     <div class="stat"><span class="ico teal">${ICON.mine}</span><div><small>Δηλώσεις</small><b>${S.regs.length}</b><small>${inv.length?inv.length+' πρόσκληση σε αναμονή':'καμία πρόσκληση σε αναμονή'}</small></div></div>
+   </div>
+   ${medAlert()}${inv.map(i=>{const t=UPC.find(x=>x.id===i.t),f=ATH[i.from];return `<div class="callout"><div class="av blue" style="background:var(--surface)">${f.first[0]}${f.last[0]}</div>
+     <div class="t"><b>${esc(f.name)} σε προσκάλεσε στο ${esc(t.name)}</b><span>Βαθμοί ομάδας ${fmt(f.pts+me.pts)} · απάντηση έως ${dtime(t.regClose)}</span></div>
+     <button class="btn ghost sm" data-act="decline" data-id="${i.id}">Απόρριψη</button><button class="btn sm" data-act="accept" data-id="${i.id}">Αποδοχή</button></div>`;}).join('')}
+   <div class="card">${UPC.map(t=>{
+     const st=regStatus(t),d=pd(t.start),reg=S.regs.find(r=>r.t===t.id),iv=inv.find(i=>i.t===t.id);
+     let act;
+     if(reg)act=`${regChip(reg)}<button class="btn ghost sm" data-act="tab" data-id="mine">Προβολή</button>`;
+     else if(iv)act=`<span class="chip info">Πρόσκληση</span><button class="btn ghost sm" data-act="tab" data-id="mine">Απάντηση</button>`;
+     else if(t.minBorn&&me.born<t.minBorn)act=`<span class="chip">Μόνο U19 · γ. ${t.minBorn} και μετά</span>`;
+     else if(st==='open')act=`<span class="chip good">Ανοιχτές</span><button class="btn sm" data-act="register" data-id="${t.id}">Δήλωση συμμετοχής</button>`;
+     else if(st==='soon')act=`<span class="chip">Ανοίγουν ${dtime(t.regOpen)}</span>`;
+     else act=`<span class="chip warn">Έκλεισαν</span>`;
+     return `<div class="trow"><div class="datebox ${tcls(t)}"><b>${d.getDate()}</b><span>${MS[d.getMonth()]}</span></div>
+       <div style="min-width:0"><h3>${esc(t.name)} <span class="tag ${tcls(t)}" style="margin-left:4px">${t.type} ×${t.coef}</span></h3>
+       <div class="meta">${drange(t.start,t.end)} · ${esc(t.venue)}</div>
+       <div class="meta">${t.cats.map(catL).join(' & ')} · ${t.minAge}+ · ${st==='open'?`δηλώσεις έως <b style="color:var(--fg)">${dtime(t.regClose)}</b>`:`δηλώσεις ${dtime(t.regOpen)} – ${dtime(t.regClose)}`}</div></div>
+       <div class="act"><button class="iconbtn" data-act="addCal" data-id="${t.id}" title="Προσθήκη στο ημερολόγιο" aria-label="Προσθήκη στο ημερολόγιο">${ICON.calendar}</button>${act}</div></div>`;}).join('')}</div>`;
+}
+function regChip(r){return r.status==='accepted'?'<span class="chip good">Επιβεβαιωμένη</span>':'<span class="chip warn">Αναμονή αποδοχής</span>';}
+function vMine(){
+  const inv=S.invites.filter(i=>i.status==='pending'),T=id=>UPC.find(t=>t.id===id),me=ATH[ME];
+  let h=`<div class="head"><div><h1 class="page">Οι δηλώσεις μου</h1><p class="sub">Προσκλήσεις που έλαβες και δηλώσεις που έκανες.</p></div><button class="btn ghost" data-act="tab" data-id="tournaments">${ICON.plus} Νέα δήλωση</button></div>`;
+  if(inv.length)h+=`<h2 class="sec">Προσκλήσεις <span class="count">${inv.length}</span></h2>`+inv.map(i=>{const t=T(i.t),f=ATH[i.from];
+    return `<div class="callout"><div class="av blue" style="background:var(--surface)">${f.first[0]}${f.last[0]}</div><div class="t"><b>${esc(f.name)} · ${esc(t.name)}</b><span>${drange(t.start,t.end)} · βαθμοί ομάδας ${fmt(f.pts+me.pts)} (${fmt(f.pts)} + ${fmt(me.pts)})</span></div>
+      <button class="btn ghost sm" data-act="decline" data-id="${i.id}">Απόρριψη</button><button class="btn sm" data-act="accept" data-id="${i.id}">Αποδοχή</button></div>`;}).join('');
+  h+=`<h2 class="sec">Δηλώσεις <span class="count">${S.regs.length}</span></h2>`;
+  if(!S.regs.length)return h+`<div class="card empty">Δεν έχεις κάνει ακόμα δήλωση.<br><br><button class="btn sm" data-act="tab" data-id="tournaments">Δες τα τουρνουά</button></div>`;
+  return h+S.regs.map(r=>{const t=T(r.t),p=ATH[r.partner],ok=r.status==='accepted';
+    return `<div class="card pad" style="margin-bottom:12px"><div class="row" style="justify-content:space-between">
+      <div style="min-width:0"><div class="eyebrow">${esc(t.name)} · ${drange(t.start,t.end)}</div><div style="font-size:16px"><b>${me.last} / ${p.last}</b> <span class="muted">· ${fmt(p.pts+me.pts)} βαθμοί ομάδας</span></div></div>
+      <div class="row">${regChip(r)}${!ok?`<button class="btn quiet sm" data-act="simAccept" data-id="${r.t}">Προσομοίωση αποδοχής</button>`:''}${ok&&!r.paid?`<button class="btn sm" data-act="pay" data-id="${r.t}">Πληρωμή €${FEE}</button>`:''}${r.paid?`<span class="chip good">Πληρώθηκε</span><button class="btn ghost sm" data-act="qr" data-id="${r.t}">QR check-in</button>`:''}<button class="btn danger sm" data-act="cancelReg" data-id="${r.t}">Ακύρωση</button></div></div>
+      <div class="steps"><span class="step done">✓ Πρόσκληση εστάλη</span><span class="step ${ok?'done':'now'}">${ok?'✓ ':''}Αποδοχή από ${esc(p.first)}</span><span class="step ${r.paid?'done':ok?'now':''}">${r.paid?'✓ ':''}Πληρωμή παραβόλου</span><span class="step ${r.paid?'now':''}">Λίστα συμμετοχής · μετά τις ${dtime(t.regClose)}</span></div></div>`;}).join('');
+}
+
+/* ---------- registration modal ---------- */
+function openRegister(tid){S.modal={type:'reg',t:tid,q:'',pick:null};renderModal();}
+function regList(){
+  const m=S.modal,q=m.q.trim().toLowerCase(),taken=TAKEN[m.t]||new Set();
+  return MEN.filter(a=>a.id!==ME).filter(a=>!q||a.name.toLowerCase().includes(q)).sort((a,b)=>a.last.localeCompare(b.last,'el')).map(a=>{
+    const dis=!a.account?'Δεν έχει λογαριασμό':taken.has(a.id)?'Έχει ήδη δηλωθεί':'';
+    return `<button class="pitem" data-act="pick" data-id="${a.id}" aria-pressed="${m.pick===a.id}" ${dis?'disabled':''}><span class="radio"></span><span class="nm">${esc(a.name)}<small>${dis||'Διαθέσιμος'}</small></span><span class="num muted">${fmt(a.pts)}</span></button>`;}).join('')||'<div class="empty">Κανένας αθλητής με αυτό το όνομα.</div>';
+}
+function regSum(){const p=S.modal.pick&&ATH[S.modal.pick],me=ATH[ME];return p?`Ομάδα <b>${me.last} / ${p.last}</b> · βαθμοί εισόδου <b class="num">${fmt(me.pts+p.pts)}</b> (${fmt(me.pts)} + ${fmt(p.pts)}). Ο/Η ${esc(p.first)} θα λάβει ειδοποίηση στην εφαρμογή και email.`:'Διάλεξε συμπαίκτη για να δεις τους βαθμούς της ομάδας.';}
+function regBody(){
+  return `<div class="field"><span class="lab">Κατηγορία</span><div class="row"><span class="chip info plain">Ανδρών</span><span class="hint">Ορίζεται από το προφίλ σου.</span></div></div>
+   <div class="field"><label for="psearch">Συμπαίκτης</label><input id="psearch" class="input" placeholder="Αναζήτηση με όνομα ή επώνυμο" value="${esc(S.modal.q)}" data-in="q" autocomplete="off">
+   <span class="hint">Εμφανίζονται αθλητές με λογαριασμό που πληρούν τους όρους του τουρνουά.</span></div>
+   <div class="plist" id="plist">${regList()}</div><div class="summary" id="regsum">${regSum()}</div>`;
+}
+
+/* ---------- schedule ---------- */
+function vSchedule(){
+  const t=UPC[0],done=MATCHES.filter(m=>m.sets).length;
+  const list=MATCHES.filter(m=>S.schedF==='all'||(S.schedF==='todo'?!m.sets:!!m.sets)).filter(m=>S.schedG==='all'||m.g===S.schedG);
+  return `<div class="head"><div><div class="eyebrow">Παράδειγμα · 2η μέρα αγώνων</div><h1 class="page">${t.name} 2027</h1><p class="sub">Σάββατο 12 Ιουνίου · ${t.venue}</p>
+     <div class="row" style="margin-top:10px;font-size:13px;font-weight:500"><span class="num">${done} από ${MATCHES.length} αγώνες ολοκληρώθηκαν</span></div><div class="progress"><i style="width:${done/MATCHES.length*100}%"></i></div></div>
+     <div class="row"><div class="seg" role="group" aria-label="Κατάσταση">${[['all','Όλοι'],['todo','Εκκρεμούν'],['done','Ολοκληρώθηκαν']].map(([k,l])=>`<button data-act="schedF" data-id="${k}" aria-pressed="${S.schedF===k}">${l}</button>`).join('')}</div>
+     <div class="seg" role="group" aria-label="Κατηγορία">${[['all','Όλες'],['M','Άνδρες'],['W','Γυναίκες']].map(([k,l])=>`<button data-act="schedG" data-id="${k}" aria-pressed="${S.schedG===k}">${l}</button>`).join('')}</div></div></div>
+   <div class="card">${list.map(m=>`<div class="srow"><div class="when"><b>${m.time}</b><span>Γήπεδο ${m.court}</span></div>
+     <div style="min-width:0"><div class="smeta"><span class="chip plain ${m.g==='M'?'info':'violet'}">${m.g==='M'?'Άνδρες':'Γυναίκες'}</span><span class="chip plain">${m.round}</span>${m.sets?'<span class="chip good">Ολοκληρώθηκε</span>':''}${m.ref!=null?`<span class="chip plain">Διαιτ. ${REFS[m.ref].name}</span>`:''}</div>
+     ${m.sets?`<div class="mini">${boardRows(m)}</div>`:`<div class="pending"><span>${tl(m.a)}</span><span class="vs">VS</span><span>${tl(m.b)}</span></div>`}</div>
+     <div class="act">${m.sets?`<button class="btn ghost sm" data-act="score" data-id="${m.id}">Διόρθωση</button>`:`<button class="btn ghost sm" data-act="resched" data-id="${m.id}">Αλλαγή ώρας</button><button class="btn sm" data-act="score" data-id="${m.id}">Καταχώριση σκορ</button>`}</div></div>`).join('')||'<div class="empty">Δεν υπάρχουν αγώνες με αυτά τα φίλτρα.</div>'}</div>`;
+}
+function setRes(a,b,target){
+  if(a===''&&b==='')return null;if(a===''||b==='')return'bad';
+  a=+a;b=+b;if(!Number.isInteger(a)||!Number.isInteger(b))return'bad';
+  const hi=Math.max(a,b),lo=Math.min(a,b);if(hi<target||hi-lo<2||(hi>target&&hi-lo!==2))return'bad';return a>b?'A':'B';
+}
+function evalScore(sets){
+  const r=[setRes(sets[0][0],sets[0][1],21),setRes(sets[1][0],sets[1][1],21),setRes(sets[2][0],sets[2][1],15)];
+  if(r.includes('bad'))return{ok:false,bad:true,msg:`Το σετ ${r.indexOf('bad')+1} δεν είναι έγκυρο. Τα σετ 1–2 πάνε στους 21, το 3ο στους 15, με διαφορά 2.`,r};
+  if(!r[0]||!r[1])return{ok:false,msg:'Συμπλήρωσε τα σετ.',r};
+  if(r[0]===r[1]){if(r[2])return{ok:false,bad:true,msg:'Ο αγώνας κρίθηκε 2–0, το 3ο σετ μένει κενό.',r};return{ok:true,w:r[0],a:r[0]==='A'?2:0,b:r[0]==='B'?2:0,r};}
+  if(!r[2])return{ok:false,msg:'Ισοπαλία 1–1: συμπλήρωσε το 3ο σετ.',r};
+  return{ok:true,w:r[2],a:r[2]==='A'?2:1,b:r[2]==='B'?2:1,r};
+}
+function finalHTML(e,m){
+  if(e.ok)return `<div class="final"><div class="big">${e.a}<span> : </span>${e.b}</div><div><div class="lbl">ΤΕΛΙΚΟ</div><div>Νίκη <b>${tl(e.w==='A'?m.a:m.b)}</b></div></div></div>`;
+  return `<div class="final ${e.bad?'bad':'idle'}">${e.msg}</div>`;
+}
+function scoreBody(){
+  const m=MATCHES.find(x=>x.id===S.modal.id),s=S.modal.sets,e=evalScore(s);
+  const inp=(i,j)=>`<input class="input num ${e.r[i]===(j?'B':'A')?'w':''}" inputmode="numeric" maxlength="2" id="s${i}${j}" data-set="${i}${j}" value="${s[i][j]}" aria-label="Σετ ${i+1}, ομάδα ${j+1}">`;
+  return `<div class="sgrid"><div></div><div class="h">ΣΕΤ 1</div><div class="h">ΣΕΤ 2</div><div class="h">ΣΕΤ 3</div>
+    <div class="tn">${tl(m.a)}</div>${inp(0,0)}${inp(1,0)}${inp(2,0)}<div class="tn">${tl(m.b)}</div>${inp(0,1)}${inp(1,1)}${inp(2,1)}</div>
+    <div id="scoreres">${finalHTML(e,m)}</div><p class="hint" style="margin:0">Με την αποθήκευση το αποτέλεσμα εμφανίζεται αμέσως στη σελίδα του τουρνουά.</p>`;
+}
+
+/* ---------- super admin ---------- */
+function vOverview(){
+  const open=UPC.filter(t=>regStatus(t)==='open'),lp=(S.pub.M?0:1)+(S.pub.W?0:1),noAdm=UPC.filter(t=>!t.admin);
+  return `<div class="head"><div><h1 class="page">Επισκόπηση</h1><p class="sub">Τι χρειάζεται την προσοχή σου σήμερα.</p></div><button class="btn" data-act="wizard">${ICON.plus} Νέο τουρνουά</button></div>
+   <div class="kpis">
+     <div class="card kpi"><span class="ico blue">${ICON.tournaments}</span><div class="stat"><small>Τουρνουά 2027</small><b>${UPC.length}</b></div></div>
+     <div class="card kpi"><span class="ico teal">${ICON.mail}</span><div class="stat"><small>Ανοιχτές δηλώσεις</small><b>${open.length}</b></div></div>
+     <div class="card kpi"><span class="ico violet">${ICON.users}</span><div class="stat"><small>Αιτήματα επαλήθευσης</small><b>${CLAIMS.length}</b></div></div>
+     <div class="card kpi"><span class="ico sun">${ICON.lists}</span><div class="stat"><small>Λίστες προς έγκριση</small><b>${lp}</b></div></div></div>
+   <h2 class="sec">Εκκρεμότητες</h2><div class="card">
+     ${lp?`<div class="todo"><span class="ico sun">${ICON.lists}</span><div class="txt"><b>Λίστες συμμετοχής Masters Θεσσαλονίκης</b><span>Δημιουργήθηκαν αυτόματα με βάση τους βαθμούς. Έλεγξε τα wild cards και δημοσίευσέ τες.</span></div><button class="btn sm" data-act="tab" data-id="lists">Έλεγχος</button></div>`:''}
+     ${CLAIMS.length?`<div class="todo"><span class="ico violet">${ICON.users}</span><div class="txt"><b>${CLAIMS.length} αιτήματα σύνδεσης λογαριασμού με αθλητή</b><span>Το email δεν ταιριάζει με το μητρώο, χρειάζεται έγκριση.</span></div><button class="btn ghost sm" data-act="tab" data-id="users">Προβολή</button></div>`:''}
+     ${noAdm.length?`<div class="todo"><span class="ico" style="background:var(--bad-soft);color:var(--bad)">${ICON.alert}</span><div class="txt"><b>${noAdm.map(t=>esc(t.name)).join(', ')} χωρίς admin</b><span>Όρισε ποιος θα καταχωρεί τα σκορ.</span></div><button class="btn ghost sm" data-act="tab" data-id="users">Ορισμός</button></div>`:''}
+     ${open.map(t=>`<div class="todo"><span class="ico teal">${ICON.mail}</span><div class="txt"><b>Δηλώσεις ${esc(t.name)}</b><span>Κλείνουν ${dtime(t.regClose)}</span></div></div>`).join('')}
+   </div>`;
+}
+function vTournamentsAdmin(){
+  const stc={open:'<span class="chip good">Ανοιχτές</span>',soon:'<span class="chip">Δεν άνοιξαν</span>',closed:'<span class="chip warn">Έκλεισαν</span>'};
+  return `<div class="head"><div><h1 class="page">Τουρνουά</h1><p class="sub">Σεζόν 2027 · ημερομηνία προεπισκόπησης ${NOW.getDate()} ${MG[NOW.getMonth()]} ${NOW.getFullYear()}</p></div><button class="btn" data-act="wizard">${ICON.plus} Νέο τουρνουά</button></div>
+   <div class="card tscroll"><table class="tbl stack" style="min-width:720px"><thead><tr><th>Τουρνουά</th><th>Ημερομηνίες</th><th>Δηλώσεις</th><th>Admin</th><th></th></tr></thead><tbody>
+   ${UPC.map(t=>{const st=regStatus(t);return `<tr><td><div class="row" style="gap:8px"><b>${esc(t.name)}</b><span class="tag ${tcls(t)}">${t.type}</span></div><small class="muted">${esc(t.venue)}</small></td>
+     <td data-l="Ημερομηνίες" style="white-space:nowrap">${drange(t.start,t.end)}</td><td data-l="Δηλώσεις">${stc[st]}<div class="muted" style="font-size:12px;margin-top:3px;white-space:nowrap">${st==='soon'?'ανοίγουν '+dtime(t.regOpen):'έως '+dtime(t.regClose)}</div></td>
+     <td data-l="Admin">${t.admin?`<div class="row" style="gap:8px;flex-wrap:nowrap"><span class="av teal" style="width:26px;height:26px;font-size:11px">${t.admin.split(' ').map(w=>w[0]).join('')}</span>${esc(t.admin)}</div>`:'<span class="chip bad">Χωρίς admin</span>'}</td>
+     <td class="r"><button class="btn ghost sm" data-act="wizard" data-id="${t.id}">Επεξεργασία</button></td></tr>`;}).join('')}
+   </tbody></table></div>`;
+}
+function entryList(g){
+  const t=UPC[0],wc=S.wc[g],wd=S.wd[g],order=TEAMS[g].slice().sort((a,b)=>tp(b)-tp(a)||hash(a.id)-hash(b.id));
+  const wcT=order.filter(x=>wc.has(x.id)&&!wd.has(x.id)),rest=order.filter(x=>!wc.has(x.id)&&!wd.has(x.id)),nd=t.direct+(t.wc-wcT.length);
+  return {order,wcT,direct:rest.slice(0,nd),qual:rest.slice(nd,nd+t.qual),res:rest.slice(nd+t.qual)};
+}
+function vLists(){
+  const t=UPC[0],g=S.listG,L=entryList(g),pub=S.pub[g],rank=new Map(L.order.map((x,i)=>[x.id,i+1]));
+  const ties=new Set();L.order.forEach((x,i)=>{const n=L.order[i+1];if(n&&tp(n)===tp(x)){ties.add(x.id);ties.add(n.id);}});
+  const paid=x=>hash(x.id+'fee')%5!==0;
+  const row=(x,kind)=>`<tr><td class="place">${rank.get(x.id)}</td><td class="team"><b>${tl(x)}</b><small class="num">${fmt(x.a.pts)} + ${fmt(x.b.pts)} · <span style="color:var(--${paid(x)?'good':'warn'})">${paid(x)?'παράβολο πληρωμένο':'παράβολο εκκρεμεί'}</span></small></td>
+    <td class="r"><b class="num">${fmt(tp(x))}</b>${ties.has(x.id)?'<div><span class="chip sun plain">Ισοβαθμία · κλήρωση</span></div>':''}</td>
+    <td class="r">${kind==='wdn'?`<button class="btn ghost sm" data-act="unwd" data-id="${x.id}">Επαναφορά</button>`:`${!pub&&kind==='wc'?`<button class="btn danger sm" data-act="wc" data-id="${x.id}">Αφαίρεση WC</button>`:''}${!pub&&(kind==='qual'||kind==='res')?`<button class="btn ghost sm" data-act="wc" data-id="${x.id}" ${L.wcT.length>=t.wc?'disabled':''}>Δώσε wild card</button>`:''}${kind!=='res'?`<button class="btn quiet sm" data-act="wd" data-id="${x.id}">Απόσυρση</button>`:''}`}</td></tr>`;
+  const sec=(title,color,info,arr,kind)=>(arr.length||kind==='wc')?`<div class="band"><div class="l"><i style="background:${color}"></i>${title}</div><span>${info}</span></div><div class="tscroll"><table class="tbl fixed elist"><colgroup><col style="width:64px"><col><col style="width:140px"><col style="width:280px"></colgroup><tbody>${arr.map(x=>row(x,kind)).join('')||`<tr><td colspan="4" class="muted">Δεν έχουν δοθεί wild cards. Οι ελεύθερες θέσεις περνούν στις επόμενες ομάδες.</td></tr>`}</tbody></table></div>`:'';
+  return `<div class="head"><div><div class="eyebrow">Παράδειγμα · μετά το κλείσιμο των δηλώσεων</div><h1 class="page">Λίστα συμμετοχής</h1><p class="sub">${t.name} 2027 · ${drange(t.start,t.end)}</p></div><div class="seg" role="group" aria-label="Κατηγορία">${gBtns(g,'listG')}</div></div>
+   <p class="formula">Κύριο ταμπλό ${t.main} = ${t.direct} απευθείας + ${t.wc} wild cards + ${t.main-t.direct-t.wc} από προκριματικά · Προκριματικά ${t.qual} ομάδες · Βαθμοί ομάδας = άθροισμα των δύο αθλητών</p>
+   ${pub?`<div class="banner good"><span class="grow">✓ Δημοσιεύτηκε ${pub}. Είναι ορατή σε όλους και οι αθλητές ειδοποιήθηκαν.</span><button class="btn ghost sm" data-act="unpub">Ανάκληση για αλλαγές</button></div>`
+     :`<div class="banner info"><span class="grow">Η λίστα δημιουργήθηκε αυτόματα. Δώσε wild cards αν χρειάζεται και δημοσίευσέ την.</span><button class="btn sm" data-act="publish">Έγκριση & δημοσίευση</button></div>`}
+   <div class="card" style="overflow:hidden">${sec('Απευθείας στο κύριο ταμπλό','var(--good)',`${L.direct.length} ομάδες`,L.direct,'direct')}${sec('Wild cards','var(--sun)',`${L.wcT.length} από ${t.wc}`,L.wcT,'wc')}${sec('Προκριματικά','var(--accent)',`${L.qual.length} ομάδες · ${t.main-t.direct-t.wc} προκρίνονται`,L.qual,'qual')}${sec('Αναπληρωματικές','var(--muted)',`${L.res.length} ομάδες`,L.res,'res')}${S.wd[g].size?sec('Αποσύρθηκαν','var(--bad)',`${S.wd[g].size} ομάδες`,TEAMS[g].filter(x=>S.wd[g].has(x.id)),'wdn'):''}</div>`;
+}
+function vUsers(){
+  return `<div class="head"><div><h1 class="page">Χρήστες & ρόλοι</h1><p class="sub">${MEN.length+WOMEN.length} αθλητές στο μητρώο · ${MEN.length+WOMEN.length-3-CLAIMS.length} με επαληθευμένο λογαριασμό</p></div></div>
+   ${CLAIMS.length?`<h2 class="sec" style="margin-top:0">Αιτήματα επαλήθευσης <span class="count">${CLAIMS.length}</span></h2>`+CLAIMS.map(c=>{const a=ATH[c.ath];return `<div class="card pad" style="margin-bottom:10px"><div class="row" style="justify-content:space-between">
+     <div class="row claim-body" style="flex-wrap:nowrap;align-items:flex-start;min-width:0;flex:1"><span class="ico violet">${ICON.users}</span><div style="min-width:0"><div class="eyebrow" style="margin:0">${c.when}</div><div>Ο λογαριασμός <b>${c.acct}</b> ζητά σύνδεση με ${a.g==='M'?'τον αθλητή':'την αθλήτρια'} <b>${esc(a.name)}</b>.</div><div class="hint">${c.why} Επιβεβαίωσε τηλεφωνικά ή από κοντά πριν την έγκριση.</div></div></div>
+     <div class="row"><button class="btn danger sm" data-act="claim" data-ok="0" data-id="${c.id}">Απόρριψη</button><button class="btn sm" data-act="claim" data-ok="1" data-id="${c.id}">Έγκριση</button></div></div></div>`;}).join(''):''}
+   <h2 class="sec">Διαχειριστές</h2>
+   <div class="card tscroll"><table class="tbl stack" style="min-width:600px"><thead><tr><th>Όνομα</th><th>Ρόλος</th><th>Πρόσβαση</th><th>Κατάσταση</th></tr></thead><tbody>
+     ${ADMINS.map(a=>`<tr><td><div class="row" style="gap:10px;flex-wrap:nowrap"><span class="av ${a.role==='super'?'violet':'teal'}" style="width:30px;height:30px;font-size:11px">${a.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</span><div><b>${esc(a.name)}</b><br><small class="muted">${esc(a.email)}</small></div></div></td><td>${a.role==='super'?'<span class="chip violet plain">Super admin</span>':'<span class="chip teal plain">Admin τουρνουά</span>'}</td><td data-l="Πρόσβαση">${esc(a.scope)}</td><td>${a.status==='Ενεργός'?'<span class="chip good">Ενεργός</span>':'<span class="chip warn">'+esc(a.status)+'</span>'}</td></tr>`).join('')}
+   </tbody></table></div>
+   <h2 class="sec">Νέος admin τουρνουά</h2>
+   <form class="card pad" id="adminForm"><div class="fgrid">
+     <div class="field"><label for="anm">Ονοματεπώνυμο</label><input id="anm" class="input" required placeholder="π.χ. Μαρία Παπαδάκη"></div>
+     <div class="field"><label for="aem">Email</label><input id="aem" class="input" type="email" required placeholder="name@example.com"></div>
+     <div class="field full"><label for="atr">Τουρνουά</label><select id="atr" class="input">${UPC.map(t=>`<option>${esc(t.name)} 2027</option>`).join('')}</select><span class="hint">Θα λάβει email πρόσκλησης. Στην πρώτη σύνδεση ορίζει κωδικό και εφαρμογή επαλήθευσης (διπλός έλεγχος).</span></div>
+   </div><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" type="submit">${ICON.mail} Αποστολή πρόσκλησης</button></div></form>`;
+}
+
+/* ---------- wizard ---------- */
+const WDEF=()=>({name:'',venue:'',type:'Masters',coef:1,start:'2027-06-25',end:'2027-06-27',regOpen:'2027-05-25T10:00',regClose:'2027-06-15T20:00',cats:['M','W'],main:12,direct:8,wc:2,qual:8,minAge:16,admin:''});
+function openWizard(id){const t=id&&UPC.find(x=>x.id===id);S.modal={type:'wiz',step:1,edit:id||null,d:t?JSON.parse(JSON.stringify(t)):WDEF(),err:''};renderModal();}
+function wizBody(){
+  const m=S.modal,d=m.d,f=(k,type='text',extra='')=>`<input id="w_${k}" class="input" type="${type}" data-w="${k}" value="${esc(d[k])}" ${extra}>`;
+  if(m.step===1)return `<div class="field"><label for="w_name">Όνομα τουρνουά</label>${f('name','text','placeholder="π.χ. Masters Ρεθύμνου"')}</div>
+    <div class="field"><label for="w_venue">Τοποθεσία</label>${f('venue','text','placeholder="π.χ. Παραλία Ρεθύμνου"')}</div>
+    <div class="field"><span class="lab">Είδος</span><div class="choice">${[['Masters',1,'Συντελεστής ×1'],['Finals',2,'Συντελεστής ×2'],['Νέοι',0.5,'Συντελεστής ×0.5']].map(([k,c,s])=>`<button type="button" data-act="wtype" data-id="${k}" data-c="${c}" aria-pressed="${d.type===k}">${k}<small>${s}</small></button>`).join('')}</div>
+    <span class="hint">Ο συντελεστής πολλαπλασιάζει τους βαθμούς που παίρνουν οι αθλητές από αυτό το τουρνουά.</span></div>`;
+  if(m.step===2)return `<div class="fgrid"><div class="field"><label for="w_start">Πρώτη μέρα</label>${f('start','date')}</div><div class="field"><label for="w_end">Τελευταία μέρα</label>${f('end','date')}</div>
+    <div class="field"><label for="w_regOpen">Δηλώσεις ανοίγουν</label>${f('regOpen','datetime-local')}</div><div class="field"><label for="w_regClose">Δηλώσεις κλείνουν</label>${f('regClose','datetime-local')}</div></div>
+    <span class="hint">Οι δηλώσεις ανοίγουν και κλείνουν αυτόματα. Μετά το κλείσιμο η λίστα συμμετοχής δημιουργείται μόνη της.</span>`;
+  return `<div class="field"><span class="lab">Κατηγορίες</span><div class="row"><label class="check"><input type="checkbox" data-cat="M" ${d.cats.includes('M')?'checked':''}> Ανδρών</label><label class="check"><input type="checkbox" data-cat="W" ${d.cats.includes('W')?'checked':''}> Γυναικών</label>${['U17','U19','U21'].map(c=>`<label class="check"><input type="checkbox" data-cat="${c}" ${d.cats.includes(c)?'checked':''}> ${c}</label>`).join('')}</div></div>
+    <div class="fgrid"><div class="field"><label for="w_main">Ομάδες στο κύριο ταμπλό</label><select id="w_main" class="input" data-w="main">${[8,12,16,24].map(n=>`<option ${+d.main===n?'selected':''}>${n}</option>`).join('')}</select></div>
+     <div class="field"><label for="w_direct">Απευθείας είσοδοι</label>${f('direct','number','min="0"')}</div>
+     <div class="field"><label for="w_wc">Wild cards</label>${f('wc','number','min="0"')}</div>
+     <div class="field"><label for="w_qual">Ομάδες στα προκριματικά</label>${f('qual','number','min="0"')}</div>
+     <div class="field"><label for="w_minAge">Ελάχιστη ηλικία</label>${f('minAge','number','min="0"')}</div>
+     <div class="field"><label for="w_admin">Admin τουρνουά</label><select id="w_admin" class="input" data-w="admin"><option value="">Αργότερα</option>${ADMINS.filter(a=>a.role==='tadmin').map(a=>`<option ${d.admin===a.name?'selected':''}>${esc(a.name)}</option>`).join('')}</select></div></div>
+    <div class="summary" id="wsum">${wizSummary()}</div>`;
+}
+function wizSummary(){const d=S.modal.d,fq=d.main-d.direct-d.wc;return fq<0?`<span class="err">Οι απευθείας είσοδοι και τα wild cards ξεπερνούν το κύριο ταμπλό.</span>`:`Κύριο ταμπλό <b>${d.main}</b> ομάδες = <b>${d.direct}</b> απευθείας + <b>${d.wc}</b> wild cards + <b>${fq}</b> από προκριματικά${d.qual?` (${d.qual} ομάδες στα προκριματικά)`:''}.`;}
+function wizCheck(){
+  const d=S.modal.d,s=S.modal.step;
+  if(s===1&&!d.name.trim())return'Γράψε όνομα τουρνουά.';
+  if(s===1&&!d.venue.trim())return'Γράψε τοποθεσία.';
+  if(s===2){if(!d.start||!d.end||!d.regOpen||!d.regClose)return'Συμπλήρωσε όλες τις ημερομηνίες.';
+    if(pd(d.end)<pd(d.start))return'Η τελευταία μέρα είναι πριν από την πρώτη.';
+    if(pd(d.regClose)<=pd(d.regOpen))return'Οι δηλώσεις πρέπει να κλείνουν μετά το άνοιγμα.';
+    if(pd(d.regClose)>=pd(d.start))return'Οι δηλώσεις πρέπει να κλείνουν πριν ξεκινήσει το τουρνουά.';}
+  if(s===3){if(!d.cats.length)return'Διάλεξε τουλάχιστον μία κατηγορία.';if(d.main-d.direct-d.wc<0)return'Διόρθωσε τον αριθμό των ομάδων.';}
+  return'';
+}
+
+/* ---------- modal ---------- */
+function renderModal(){
+  const m=S.modal,root=$('#modal-root');if(!m){root.innerHTML='';return;}
+  let head,body,foot,wide=false;
+  if(m.type==='login'){head=['Σύνδεση','Με το email και τον κωδικό του λογαριασμού σου.'];
+    body=`<div class="field"><label for="lem">Email</label><input id="lem" class="input" type="email" value="athlete@example.com"></div>
+      <div class="field"><label for="lpw">Κωδικός</label><input id="lpw" class="input" type="password" value="••••••••••"></div>
+      <div class="row" style="justify-content:space-between"><button class="btn quiet sm" data-act="forgot">Ξέχασα τον κωδικό μου</button><span class="hint">Νέος αθλητής; <button class="btn quiet sm" data-act="signup">Δημιουργία λογαριασμού</button></span></div><div id="loginmsg"></div>`;
+    foot=`<span></span><button class="btn" data-act="doLogin">Σύνδεση</button>`;}
+  if(m.type==='reg'){const t=UPC.find(x=>x.id===m.t);head=['Δήλωση συμμετοχής',`${t.name} · ${drange(t.start,t.end)}`];body=regBody();
+    foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="sendReg" id="sendReg" ${m.pick?'':'disabled'}>Αποστολή πρόσκλησης</button>`;}
+  if(m.type==='score'){const x=MATCHES.find(y=>y.id===m.id);head=['Σκορ αγώνα',`${x.time} · Γήπεδο ${x.court} · ${x.g==='M'?'Άνδρες':'Γυναίκες'} · ${x.round}`];body=scoreBody();
+    foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="saveScore" id="saveScore" ${evalScore(m.sets).ok?'':'disabled'}>Αποθήκευση & δημοσίευση</button>`;}
+  if(m.type==='wiz'){wide=true;head=[m.edit?'Επεξεργασία τουρνουά':'Νέο τουρνουά','Τρία σύντομα βήματα. Όλα αλλάζουν και αργότερα.'];body=wizBody();
+    foot=`${m.step>1?'<button class="btn ghost" data-act="wback">← Πίσω</button>':'<button class="btn ghost" data-act="close">Άκυρο</button>'}<div class="row"><span class="err">${esc(m.err)}</span>${m.step<3?'<button class="btn" data-act="wnext">Συνέχεια →</button>':`<button class="btn" data-act="wsave">${m.edit?'Αποθήκευση αλλαγών':'Δημιουργία τουρνουά'}</button>`}</div>`;}
+  if(m.type==='photo'){const P=findPhoto(m.id);head=[P.p.team?tl(P.p.team):'Φωτογραφία',`${P.A.t.name} ${P.A.t.season}`];wide=true;
+    body=`<div class="bigphoto">${photoSVG(P.p.seed)}</div>${P.p.team?`<div class="field"><span class="lab">Στη φωτογραφία</span><div>${lnk(P.p.team.a,true)} · ${lnk(P.p.team.b,true)}</div></div>`:''}<p class="hint" style="margin:0">Φωτογραφία: Λευτέρης Ανδρέου · ${P.A.t.name} ${P.A.t.season}</p>`;
+    foot=`<button class="btn ghost" data-act="share">Κοινοποίηση</button><button class="btn" data-act="dl">Λήψη</button>`;}
+  if(m.type==='pay'){const t=UPC.find(x=>x.id===m.t);head=['Πληρωμή παραβόλου',`${t.name} · ${drange(t.start,t.end)}`];
+    body=`${phaseNote(3)}<div class="summary">Παράβολο συμμετοχής ομάδας: <b>€${FEE}</b> (€${FEE/2} ανά αθλητή).</div>
+      <div class="field"><span class="lab">Τι πληρώνεις</span><div class="choice"><button type="button" data-act="payopt" data-id="all" aria-pressed="${m.opt==='all'}">Όλο το ποσό<small>€${FEE} για την ομάδα</small></button><button type="button" data-act="payopt" data-id="half" aria-pressed="${m.opt==='half'}">Το μερίδιό μου<small>€${FEE/2}, ο συμπαίκτης πληρώνει το υπόλοιπο</small></button></div></div>
+      <p class="hint" style="margin:0">Η πληρωμή γίνεται στην ασφαλή σελίδα της τράπεζας. Στην προεπισκόπηση δεν γίνεται καμία χρέωση.</p>`;
+    foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="doPay">Συνέχεια στην πληρωμή</button>`;}
+  if(m.type==='qr'){const t=UPC.find(x=>x.id===m.t);head=['QR check-in',t.name];
+    body=`<div style="text-align:center">${qrSVG(hash(m.t+ME))}<p class="hint">Δείξε τον κωδικό στον υπεύθυνο του γηπέδου την πρώτη μέρα του τουρνουά.</p></div>`;foot='';}
+  if(m.type==='notifs'){head=['Ειδοποιήσεις','Στην εφαρμογή, με email και στο κινητό'];
+    body=`<div>${NOTIFS.map(n=>`<div class="notif"><span class="ico ${n.c}">${ICON[n.ico]}</span><div class="txt"><b>${esc(n.title)}</b><span>${esc(n.text)}</span><small style="display:block">${n.when}</small></div></div>`).join('')}</div>
+      <div class="field"><span class="lab">Πώς θέλεις να ειδοποιείσαι</span>
+      <label class="check"><input type="checkbox" checked> Email</label>
+      <label class="check"><input type="checkbox" checked> Ειδοποιήσεις στο κινητό (push) <span class="ptg">Φάση 3</span></label>
+      <label class="check"><input type="checkbox"> SMS για επείγουσες αλλαγές αγώνων <span class="ptg">Φάση 3</span></label></div>`;foot='';}
+  if(m.type==='resched'){const x=MATCHES.find(y=>y.id===m.id);head=['Αλλαγή ώρας ή γηπέδου',`${tl(x.a)} – ${tl(x.b)}`];
+    body=`<div class="fgrid"><div class="field"><label for="rs_time">Ώρα</label><select id="rs_time" class="input">${['09:00','09:50','10:40','11:30','12:20','13:10','14:00','14:50','15:40','16:30'].map(h=>`<option ${h===x.time?'selected':''}>${h}</option>`).join('')}</select></div>
+      <div class="field"><label for="rs_court">Γήπεδο</label><select id="rs_court" class="input">${[1,2,3].map(c=>`<option value="${c}" ${c===x.court?'selected':''}>Γήπεδο ${c}</option>`).join('')}</select></div></div>
+      <label class="check"><input type="checkbox" id="rs_sms" checked> Ειδοποίηση των 4 αθλητών με push και SMS <span class="ptg">Φάση 3</span></label>`;
+    foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="saveResched">Αποθήκευση</button>`;}
+  if(m.type==='social'){const t=PAST.find(x=>x.id===m.t),cm=results(t,'M').stand[0].team,cw=results(t,'W').stand[0].team;head=['Κάρτα για social media',`${t.name} ${t.season}`];
+    body=`${phaseNote(3)}<div class="social"><div style="position:relative;z-index:1"><div class="k">${t.type.toUpperCase()} · ${t.season}</div><h3>${t.name}</h3></div>
+      <div class="wn"><div><small>Νικητές</small><b>${esc(cm.a.name)} / ${esc(cm.b.name)}</b></div><div><small>Νικήτριες</small><b>${esc(cw.a.name)} / ${esc(cw.b.name)}</b></div></div>
+      <div class="sp">Beach Volley Hub · Με την υποστήριξη της ${SPONSORS[0].name}</div></div>
+      <p class="hint" style="text-align:center;margin:0">Δημιουργείται αυτόματα από τα αποτελέσματα, σε 1080×1080 για Instagram και Facebook.</p>`;
+    foot=`<button class="btn ghost" data-act="share">Κοινοποίηση</button><button class="btn" data-act="dlCard">Λήψη εικόνας</button>`;}
+  if(m.type==='post'){head=['Νέα αγγελία','Βρες συμπαίκτη για ένα τουρνουά'];
+    body=`<div class="field"><label for="po_t">Τουρνουά</label><select id="po_t" class="input">${UPC.filter(t=>regStatus(t)==='open'&&t.cats.includes('M')).map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select></div>
+      <div class="field"><label for="po_note">Μήνυμα</label><textarea id="po_note" class="input" rows="3" placeholder="π.χ. Παίζω αριστερά, ψάχνω μπλοκέρ για Θεσσαλονίκη."></textarea></div>`;
+    foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="savePost">Δημοσίευση</button>`;}
+  if(m.type==='news'){const n=NEWS.find(x=>x.id===m.id);head=[n.title,`${n.cat} · ${dshort(n.date)}`];body=`<p style="margin:0;line-height:1.65">${esc(n.text)}</p>`;foot='';}
+  if(m.type==='more'){head=['Περισσότερα','Υπόλοιπες ενότητες'];body=`<div>${TABS[S.role].slice(4).map(([id,l])=>`<button class="morei" data-act="tab" data-id="${id}">${ICON[id]}${l}</button>`).join('')}</div>`;foot='';}
+  const ws=m.type==='wiz'?`<div class="wsteps">${['1 · Βασικά','2 · Ημερομηνίες','3 · Συμμετοχή'].map((l,i)=>`<div class="${m.step===i+1?'on':m.step>i+1?'done':''}">${l}</div>`).join('')}</div>`:'';
+  root.innerHTML=`<div class="overlay" data-act="overlay"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mhead"><div><h2 id="mtitle">${head[0]}</h2><p>${esc(head[1])}</p></div><button class="x" data-act="close" aria-label="Κλείσιμο">×</button></div>${ws}
+    <div class="mbody">${body}</div>${foot?`<div class="mfoot">${foot}</div>`:''}</div></div>`;
+  const first=root.querySelector('.mbody input:not([type=checkbox])');if(first&&m.type!=='login')first.focus();
+}
+function closeModal(){S.modal=null;renderModal();}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,id=el.dataset.id;
+  if(a==='overlay'){if(e.target===el)closeModal();return;}
+  switch(a){
+    case'role':S.role=id;S.openT=null;S.openA=null;S.openAlb=null;closeModal();render();window.scrollTo(0,0);break;
+    case'tab':S.tab[S.role]=id;S.openT=null;S.openA=null;S.openAlb=null;closeModal();render();window.scrollTo(0,0);break;
+    case'season':S.season=+id;render();break;
+    case'openT':S.openT=id;render();window.scrollTo(0,0);break;
+    case'closeT':S.openT=null;render();break;
+    case'setg':S[el.dataset.key]=id;render();break;
+    case'login':S.modal={type:'login'};renderModal();break;
+    case'forgot':$('#loginmsg').innerHTML='<div class="result ok">Σου στείλαμε email με σύνδεσμο για νέο κωδικό. Ισχύει για 1 ώρα.</div>';break;
+    case'signup':$('#loginmsg').innerHTML='<div class="result no">Ανοίγεις λογαριασμό με email και κωδικό. Αν το email υπάρχει στο μητρώο, συνδέεσαι αυτόματα με το προφίλ αθλητή. Αλλιώς το αίτημα εγκρίνεται από τη γραμματεία.</div>';break;
+    case'doLogin':S.role='athlete';closeModal();render();toast('Συνδέθηκες ως '+ATH[ME].name);break;
+    case'register':openRegister(id);break;
+    case'pick':S.modal.pick=id;document.querySelectorAll('.pitem').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));$('#regsum').innerHTML=regSum();$('#sendReg').disabled=false;break;
+    case'sendReg':{const m=S.modal;S.regs.push({t:m.t,partner:m.pick,status:'pending'});(TAKEN[m.t]=TAKEN[m.t]||new Set()).add(m.pick);closeModal();render();toast('Η πρόσκληση στάλθηκε στον/στην '+ATH[m.pick].name);}break;
+    case'simAccept':{const r=S.regs.find(x=>x.t===id);r.status='accepted';render();toast(ATH[r.partner].first+' αποδέχτηκε. Η δήλωση επιβεβαιώθηκε.');}break;
+    case'cancelReg':{const r=S.regs.find(x=>x.t===id);if(TAKEN[id])TAKEN[id].delete(r.partner);S.regs=S.regs.filter(x=>x.t!==id);render();toast('Η δήλωση ακυρώθηκε και ο συμπαίκτης ενημερώθηκε.');}break;
+    case'accept':{const i=S.invites.find(x=>x.id===id);i.status='accepted';S.regs.push({t:i.t,partner:i.from,status:'accepted'});render();toast('Αποδέχτηκες. Η ομάδα σας είναι δηλωμένη.');}break;
+    case'decline':{const i=S.invites.find(x=>x.id===id);i.status='declined';render();toast('Απέρριψες την πρόσκληση. '+ATH[i.from].first+' ενημερώθηκε.');}break;
+    case'schedF':S.schedF=id;render();break;
+    case'schedG':S.schedG=id;render();break;
+    case'score':{const m=MATCHES.find(x=>x.id===id);S.modal={type:'score',id,sets:[0,1,2].map(i=>m.sets&&m.sets[i]?[String(m.sets[i][0]),String(m.sets[i][1])]:['',''])};renderModal();}break;
+    case'saveScore':{const m=MATCHES.find(x=>x.id===S.modal.id);m.sets=S.modal.sets.filter(s=>s[0]!==''&&s[1]!=='').map(s=>[+s[0],+s[1]]);logA('Καταχώριση σκορ',`${UPC[0].name} · ${m.time} Γήπεδο ${m.court} · ${tl(m.a)} – ${tl(m.b)}`);closeModal();render();toast('Αποθηκεύτηκε. Το σκορ φαίνεται ήδη στη σελίδα του τουρνουά.');}break;
+    case'wc':{const s=S.wc[S.listG],tm=TEAMS[S.listG].find(x=>x.id===id);s.has(id)?s.delete(id):s.add(id);logA(s.has(id)?'Wild card':'Αφαίρεση wild card',`${UPC[0].name} · ${tl(tm)}`);render();}break;
+    case'publish':{const d=new Date();S.pub[S.listG]=`${d.getDate()} ${MG[d.getMonth()]}, ${p2(d.getHours())}:${p2(d.getMinutes())}`;logA('Δημοσίευση λίστας',`${UPC[0].name} 2027 · ${S.listG==='M'?'Άνδρες':'Γυναίκες'}`);render();toast('Η λίστα δημοσιεύτηκε.');}break;
+    case'unpub':S.pub[S.listG]=null;render();break;
+    case'claim':{const c=CLAIMS.find(x=>x.id===id);CLAIMS=CLAIMS.filter(x=>x.id!==id);logA(el.dataset.ok==='1'?'Έγκριση αθλητή':'Απόρριψη αιτήματος',`${ATH[c.ath].name} · ${c.acct}`);render();toast(el.dataset.ok==='1'?`Εγκρίθηκε. Ο λογαριασμός συνδέθηκε με ${ATH[c.ath].name}.`:'Το αίτημα απορρίφθηκε και ο χρήστης ενημερώθηκε.');}break;
+    case'wizard':openWizard(id);break;
+    case'wtype':S.modal.d.type=id;S.modal.d.coef=+el.dataset.c;document.querySelectorAll('[data-act=wtype]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));break;
+    case'wnext':{const er=wizCheck();S.modal.err=er;if(!er)S.modal.step++;renderModal();}break;
+    case'wback':S.modal.step--;S.modal.err='';renderModal();break;
+    case'wsave':{const er=wizCheck();if(er){S.modal.err=er;renderModal();break;}const d=S.modal.d;['main','direct','wc','qual','minAge'].forEach(k=>d[k]=+d[k]);
+      if(S.modal.edit){UPC[UPC.findIndex(x=>x.id===S.modal.edit)]=d;toast('Οι αλλαγές αποθηκεύτηκαν.');}
+      else{d.id='n'+Date.now();UPC.push(d);UPC.sort((a,b)=>pd(a.start)-pd(b.start));toast('Το τουρνουά δημιουργήθηκε. Οι δηλώσεις ανοίγουν '+dtime(d.regOpen)+'.');}
+      logA(S.modal.edit?'Επεξεργασία τουρνουά':'Νέο τουρνουά',d.name);closeModal();S.tab.super='tournaments';render();}break;
+    case'more':S.modal={type:'more'};renderModal();break;
+    case'openA':S.openA=id;closeModal();render();window.scrollTo(0,0);break;
+    case'closeA':S.openA=null;render();break;
+    case'goT':{const t=PAST.find(x=>x.id===id);S.openA=null;S.tab[S.role]='results';S.season=t.season;S.openT=id;render();window.scrollTo(0,0);}break;
+    case'rankS':S.rankS=+id;render();break;
+    case'athG':S.athG=id;render();break;
+    case'lang':S.lang=id;render();if(id==='en')toast('Αγγλική έκδοση (Φάση 3): μεταφράζεται όλη η εφαρμογή. Στην προεπισκόπηση αλλάζει το μενού.');break;
+    case'openAlb':S.openAlb=id;render();window.scrollTo(0,0);break;
+    case'closeAlb':S.openAlb=null;render();break;
+    case'galMine':S.galMine=id==='1';render();break;
+    case'photo':S.modal={type:'photo',id};renderModal();break;
+    case'dl':toast('Η φωτογραφία κατέβηκε σε πλήρη ανάλυση.');break;
+    case'share':toast('Ο σύνδεσμος της φωτογραφίας αντιγράφηκε.');break;
+    case'addFiles':{const base=(Date.now()%9000)+S.upQueue.length*37;for(let i=0;i<4;i++)S.upQueue.push({seed:base+i*131,team:null});render();}break;
+    case'rmFile':S.upQueue.splice(+id,1);render();break;
+    case'publishPhotos':{const t=PAST.find(x=>x.id===S.upAlb),A=album(t),n=S.upQueue.length;S.upQueue.forEach((q,i)=>A.photos.unshift({id:t.id+'u'+Date.now()+i,seed:q.seed,team:q.team}));S.upQueue=[];logA('Ανέβασμα φωτογραφιών',`${n} φωτογραφίες · ${t.name} ${t.season}`);render();toast(`Δημοσιεύτηκαν ${n} φωτογραφίες. Οι αθλητές που επισημάνθηκαν ειδοποιήθηκαν.`);}break;
+    case'newPost':S.modal={type:'post'};renderModal();break;
+    case'savePost':{POSTS.unshift({id:'pp'+Date.now(),ath:ME,t:$('#po_t').value,note:$('#po_note').value.trim()||'Ψάχνω συμπαίκτη.',when:'Τώρα'});closeModal();render();toast('Η αγγελία δημοσιεύτηκε.');}break;
+    case'delPost':POSTS=POSTS.filter(p=>p.id!==id);render();toast('Η αγγελία διαγράφηκε.');break;
+    case'invitePost':{const p=POSTS.find(x=>x.id===id);if(S.regs.find(r=>r.t===p.t)){toast('Έχεις ήδη δήλωση για αυτό το τουρνουά.');break;}S.regs.push({t:p.t,partner:p.ath,status:'pending'});(TAKEN[p.t]=TAKEN[p.t]||new Set()).add(p.ath);render();toast('Η πρόσκληση στάλθηκε στον/στην '+ATH[p.ath].name);}break;
+    case'medUp':S.medOk=true;render();toast('Η νέα κάρτα υγείας ανέβηκε. Ισχύει έως 30 Ιουνίου 2028.');break;
+    case'addCal':{const t=UPC.find(x=>x.id===id);toast(`Το ${t.name} μπήκε στο ημερολόγιό σου, με υπενθύμιση πριν κλείσουν οι δηλώσεις.`);}break;
+    case'install':toast('Η εφαρμογή μπήκε στην αρχική οθόνη του κινητού.');break;
+    case'notifs':S.modal={type:'notifs'};renderModal();NOTIFS.forEach(n=>n.unread=false);renderShell();break;
+    case'pay':S.modal={type:'pay',t:id,opt:'all'};renderModal();break;
+    case'payopt':S.modal.opt=id;document.querySelectorAll('[data-act=payopt]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));break;
+    case'doPay':{const r=S.regs.find(x=>x.t===S.modal.t);r.paid=true;logA('Πληρωμή παραβόλου',`${UPC.find(t=>t.id===r.t).name} · €${S.modal.opt==='all'?FEE:FEE/2}`);closeModal();render();toast('Η πληρωμή ολοκληρώθηκε. Η απόδειξη στάλθηκε με email.');}break;
+    case'qr':S.modal={type:'qr',t:id};renderModal();break;
+    case'resched':S.modal={type:'resched',id};renderModal();break;
+    case'saveResched':{const m=MATCHES.find(x=>x.id===S.modal.id);m.time=$('#rs_time').value;m.court=+$('#rs_court').value;const sms=$('#rs_sms').checked;logA('Αλλαγή προγράμματος',`${tl(m.a)} – ${tl(m.b)} · ${m.time} Γήπεδο ${m.court}`);closeModal();render();toast(sms?'Αποθηκεύτηκε. Οι 4 αθλητές ειδοποιήθηκαν με push και SMS.':'Αποθηκεύτηκε. Οι αθλητές ειδοποιήθηκαν στην εφαρμογή.');}break;
+    case'social':S.modal={type:'social',t:id};renderModal();break;
+    case'dlCard':toast('Η κάρτα κατέβηκε ως εικόνα 1080×1080.');break;
+    case'mkDraw':S.drawn[S.drawG]=true;logA('Δημιουργία ταμπλό',`${UPC[0].name} · ${S.drawG==='M'?'Άνδρες':'Γυναίκες'}`);render();toast('Το ταμπλό δημιουργήθηκε από τη λίστα συμμετοχής.');break;
+    case'scan':{const c=checkin().find(x=>!x.at);if(!c){toast('Όλες οι ομάδες έκαναν check-in.');break;}c.at='08:5'+(checkin().filter(x=>x.at).length%10);render();toast('Check-in: '+tl(c.t));}break;
+    case'ciMan':{const c=checkin()[+id];c.at='08:58';render();toast('Check-in χειροκίνητα: '+tl(c.t));}break;
+    case'wd':{const g=S.listG,before=entryList(g),tm=TEAMS[g].find(x=>x.id===id);S.wd[g].add(id);S.wc[g].delete(id);const after=entryList(g);const up=after.direct.find(x=>!before.direct.includes(x))||after.qual.find(x=>!before.qual.includes(x));logA('Απόσυρση ομάδας',`${UPC[0].name} · ${tl(tm)}`);render();toast(`${tl(tm)}: αποσύρθηκε.${up?` Ανεβαίνει η ${tl(up)}, που ειδοποιήθηκε.`:''}`);}break;
+    case'unwd':S.wd[S.listG].delete(id);render();break;
+    case'pubNews':{const ti=$('#cn_title').value.trim();if(!ti){toast('Γράψε τίτλο για την ανακοίνωση.');break;}NEWS.unshift({id:'n'+Date.now(),date:'2027-05-20',cat:$('#cn_cat').value,title:ti,text:$('#cn_text').value.trim()||ti});logA('Νέα ανακοίνωση',ti);render();toast('Η ανακοίνωση δημοσιεύτηκε στη σελίδα Νέα.');}break;
+    case'readNews':S.modal={type:'news',id};renderModal();break;
+    case'export':toast(`Η αναφορά κατέβηκε σε ${id}.`);break;
+    case'close':closeModal();break;
+  }
+});
+document.addEventListener('input',e=>{
+  const el=e.target,m=S.modal;
+  if(el.dataset.pq){S.q[el.dataset.pq]=el.value;const box=$('#'+el.dataset.pq+'-list');if(box)box.innerHTML=el.dataset.pq==='rank'?rankRows():athCards();return;}
+  if(!m)return;
+  if(el.dataset.in==='q'){m.q=el.value;$('#plist').innerHTML=regList();}
+  if(el.dataset.set){const[i,j]=el.dataset.set.split('').map(Number);m.sets[i][j]=el.value.replace(/\D/g,'').slice(0,2);if(el.value!==m.sets[i][j])el.value=m.sets[i][j];
+    const ev=evalScore(m.sets),x=MATCHES.find(y=>y.id===m.id);$('#scoreres').innerHTML=finalHTML(ev,x);
+    [0,1,2].forEach(a=>[0,1].forEach(b=>$('#s'+a+b).classList.toggle('w',ev.r[a]===(b?'B':'A'))));$('#saveScore').disabled=!ev.ok;}
+  if(el.dataset.w&&el.tagName!=='SELECT'){m.d[el.dataset.w]=['direct','wc','qual','minAge'].includes(el.dataset.w)?(+el.value||0):el.value;const s=$('#wsum');if(s)s.innerHTML=wizSummary();}
+});
+document.addEventListener('change',e=>{
+  const el=e.target,m=S.modal;
+  if(el.dataset.up){S.upAlb=el.value;render();return;}
+  if(el.dataset.tag!==undefined){const q=S.upQueue[+el.dataset.tag],t=PAST.find(x=>x.id===S.upAlb);q.team=[...results(t,'M').stand,...results(t,'W').stand].map(x=>x.team).find(x=>x.id===el.value)||null;return;}
+  if(el.dataset.ref){const mm=MATCHES.find(x=>x.id===el.dataset.ref);mm.ref=+el.value;logA('Ορισμός διαιτητή',`${REFS[mm.ref].name} · ${mm.time} Γήπεδο ${mm.court}`);render();toast(`${REFS[mm.ref].name}: ορίστηκε στον αγώνα ${mm.time} · Γήπεδο ${mm.court}.`);return;}
+  if(el.dataset.spon){toast('Η θέση του χορηγού ενημερώθηκε.');return;}
+  if(!m)return;
+  if(el.dataset.cat){const c=el.dataset.cat;m.d.cats=el.checked?[...new Set([...m.d.cats,c])]:m.d.cats.filter(x=>x!==c);}
+  if(el.dataset.w&&el.tagName==='SELECT'){m.d[el.dataset.w]=el.dataset.w==='admin'?el.value:+el.value;const s=$('#wsum');if(s)s.innerHTML=wizSummary();}
+});
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='adminForm')return;e.preventDefault();
+  const n=$('#anm').value.trim(),em=$('#aem').value.trim(),t=$('#atr').value;if(!n||!em)return;
+  ADMINS.push({name:n,email:em,role:'tadmin',scope:t,status:'Πρόσκληση εστάλη'});
+  const tt=UPC.find(x=>t.startsWith(x.name));if(tt&&!tt.admin)tt.admin=n;render();toast('Η πρόσκληση στάλθηκε στο '+em);
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.modal)closeModal();});
+render();
+</script>
+
+</html>
