@@ -3,42 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Beach Volley Broadcast</title>
+<title>Beach Volley Hub</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Sans+Condensed:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: navy broadcast header with top tabs, navy hero band per page, light content cards; orange for actions, cyan for winners. */
+/* Layout: dark preview bar, white sidebar app shell, content column; scores use a navy scoreboard surface. */
 :root{
-  --bg:#EEF1F6; --surface:#FFFFFF; --surface-2:#E6EBF3; --fg:#0A1A3A; --fg-2:#2E3D5E; --muted:#56658A; --line:#DCE2EC; --line-2:#E9EDF4;
-  --accent:#FF6A2B; --accent-hover:#FF8247; --accent-soft:#FFE8DD; --accent-ink:#9A3208; --on-accent:#1C0A00;
-  --info:#0B6FA3; --info-soft:#DDF1FB;
+  --bg:#F6F7F9; --surface:#FFFFFF; --surface-2:#F1F2F5; --fg:#0B0D12; --fg-2:#3D414A; --muted:#626772; --line:#E6E7EB; --line-2:#EFF0F3;
+  --accent:#2F6FEB; --accent-hover:#2259C9; --accent-soft:#EBF1FE; --accent-ink:#1E4FB8; --on-accent:#FFFFFF;
   --sun:#F5B400; --sun-soft:#FFF4D6; --sun-ink:#7A5600;
   --teal:#0E8A7E; --teal-soft:#E2F4F1; --violet:#6E56CF; --violet-soft:#EFEBFC;
-  --bronze:#9A5420; --bronze-soft:#F6E6D8; --good:#14864D; --good-soft:#E3F4EA; --warn:#A06000; --warn-soft:#FFF1DC; --bad:#C23B32; --bad-soft:#FCE9E7;
-  --board:#0A1A3A; --board-2:#13285A; --board-3:#1C3470; --board-fg:#FFFFFF; --board-muted:#A9B6D3; --cyan:#19C3FF;
-  --scrim:rgba(5,12,28,.55); --shadow:0 1px 2px rgba(10,26,58,.08),0 8px 24px rgba(10,26,58,.06);
-  --f-ui:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --f-display:"Fira Sans Condensed","Arial Narrow",sans-serif; --f-mono:"Fira Sans Condensed","Arial Narrow",sans-serif;
+  --bronze:#9A5420; --bronze-soft:#F6E6D8; --good:#16884F; --good-soft:#E6F5EC; --warn:#A06000; --warn-soft:#FFF1DC; --bad:#C23B32; --bad-soft:#FCE9E7;
+  --board:#0B1A3A; --board-2:#13285A; --board-3:#1C3470; --board-fg:#FFFFFF; --board-muted:#A9B6D3; --cyan:#19C3FF;
+  --scrim:rgba(8,12,20,.5); --shadow:0 1px 2px rgba(11,13,18,.05),0 8px 24px rgba(11,13,18,.06);
+  --f-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-display:"Inter Tight",Inter,system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#070F22; --surface:#0F1B36; --surface-2:#16264A; --fg:#E8EDF7; --fg-2:#C2CBE0; --muted:#8E9CBC; --line:#22345C; --line-2:#1A2B50;
-  --accent:#FF7A40; --accent-hover:#FF9363; --accent-soft:#3A1E10; --accent-ink:#FFB08A; --on-accent:#1C0A00;
-  --info:#5CC8F5; --info-soft:#0E2D45;
+  --bg:#0B0D12; --surface:#12151C; --surface-2:#1A1E27; --fg:#ECEEF2; --fg-2:#C3C7D0; --muted:#8D93A0; --line:#252A35; --line-2:#1E222C;
+  --accent:#5B8DEF; --accent-hover:#79A2F3; --accent-soft:#16233F; --accent-ink:#9DBBF6; --on-accent:#06101F;
   --sun:#F5C342; --sun-soft:#33290F; --sun-ink:#F7D57E; --teal:#3CC2B2; --teal-soft:#0F2C29; --violet:#A390F0; --violet-soft:#231D3D;
   --bronze:#E0A374; --bronze-soft:#33210F; --good:#43C181; --good-soft:#0F2A1C; --warn:#E9A84B; --warn-soft:#33240E; --bad:#EE776D; --bad-soft:#36191A;
-  --board:#050D20; --board-2:#10224A; --board-3:#1A3266; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}}
+  --board:#0E1D40; --board-2:#16295A; --board-3:#1F3672; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --bg:#070F22; --surface:#0F1B36; --surface-2:#16264A; --fg:#E8EDF7; --fg-2:#C2CBE0; --muted:#8E9CBC; --line:#22345C; --line-2:#1A2B50;
-  --accent:#FF7A40; --accent-hover:#FF9363; --accent-soft:#3A1E10; --accent-ink:#FFB08A; --on-accent:#1C0A00;
-  --info:#5CC8F5; --info-soft:#0E2D45;
+  --bg:#0B0D12; --surface:#12151C; --surface-2:#1A1E27; --fg:#ECEEF2; --fg-2:#C3C7D0; --muted:#8D93A0; --line:#252A35; --line-2:#1E222C;
+  --accent:#5B8DEF; --accent-hover:#79A2F3; --accent-soft:#16233F; --accent-ink:#9DBBF6; --on-accent:#06101F;
   --sun:#F5C342; --sun-soft:#33290F; --sun-ink:#F7D57E; --teal:#3CC2B2; --teal-soft:#0F2C29; --violet:#A390F0; --violet-soft:#231D3D;
   --bronze:#E0A374; --bronze-soft:#33210F; --good:#43C181; --good-soft:#0F2A1C; --warn:#E9A84B; --warn-soft:#33240E; --bad:#EE776D; --bad-soft:#36191A;
-  --board:#050D20; --board-2:#10224A; --board-3:#1A3266; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}
+  --board:#0E1D40; --board-2:#16295A; --board-3:#1F3672; --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:14px;line-height:1.5}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#05070D}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--board)}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -329,6 +326,104 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .empty{padding:28px 18px;text-align:center;color:var(--muted)}
 .back{margin:-6px 0 10px -6px}
 
+
+/* ===== Public area (visitor) ===== */
+.navi .badge{flex:none}
+.ptg{flex:none!important;font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--violet);background:var(--violet-soft);border-radius:4px;padding:1px 6px}
+.navmore{display:none}
+.lnk{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.lnk:hover{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.panel-h .lnk{font-weight:500;color:var(--accent);font-size:13px}
+.hero{position:relative;overflow:hidden;background:var(--board);color:var(--board-fg);border-radius:16px;padding:32px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:18px}
+.hero .court{position:absolute;inset:16px;border:2px solid rgba(255,255,255,.07);border-radius:6px;pointer-events:none}
+.hero .court::before{content:"";position:absolute;top:0;bottom:0;left:58%;border-left:2px dashed rgba(255,255,255,.1)}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(245,180,0,.3),transparent 65%);pointer-events:none}
+.hero-main,.hero .next{position:relative;z-index:1;min-width:0}
+.eyebrow-l{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.hero h1{font-family:var(--f-display);font-size:38px;line-height:1.05;letter-spacing:-.02em;margin:8px 0 10px;text-wrap:balance}
+.hero p{color:var(--board-muted);margin:0 0 18px;max-width:46ch}
+.btn.hero-ghost{background:transparent;border-color:var(--board-3);color:var(--board-fg)}
+.btn.hero-ghost:hover{background:var(--board-2)}
+.next{background:var(--board-2);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.next .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--board-muted)}
+.next b{font-family:var(--f-display);font-size:20px}
+.next .meta{color:var(--board-muted);font-size:13px}
+.next .count{color:var(--board-muted);font-size:14px;margin:4px 0}
+.next .count strong{font-family:var(--f-display);font-size:40px;line-height:1;color:var(--sun);margin-right:6px;font-weight:800}
+.next .chip{align-self:flex-start}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.champ{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+.champ:last-child{border-bottom:0}
+.champ small{display:block;font-size:12px;color:var(--muted)}
+.champ .lnk{font-weight:600}
+.mini-rank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 20px;padding:12px 16px}
+.mini-rank small{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+.mr{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13.5px}
+.mr .lnk{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mr .medal{width:22px;height:22px;font-size:12px;flex:none}
+.pan-banner{margin-top:18px;width:100%;display:flex;align-items:center;gap:14px;text-align:left;padding:16px 18px;border-radius:12px;border:1px solid color-mix(in srgb,var(--sun) 35%,var(--line));background:var(--sun-soft);color:var(--fg);cursor:pointer}
+.pan-banner .txt{flex:1;min-width:0;font-size:13.5px;color:var(--fg-2)}
+.pan-banner .txt b{display:block;color:var(--fg);font-size:15px}
+.pan-banner .arr{font-size:20px;color:var(--sun-ink)}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:var(--surface);margin-bottom:12px;color:var(--muted)}
+.searchbox input{border:0;outline:0;background:transparent;flex:1;min-width:0;color:var(--fg)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.rc{display:flex;flex-wrap:wrap;gap:4px}
+.rchip{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--fg-2);white-space:nowrap}
+.rchip b{font-weight:600;color:var(--fg)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.acard{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.acard:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.acard .t{flex:1;min-width:0}
+.acard b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acard small{font-size:12px;color:var(--muted)}
+.tchip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--sun-ink);background:var(--sun-soft);border-radius:6px;padding:2px 7px;flex:none}
+.tchip svg{width:13px;height:13px}
+.prof{display:flex;gap:16px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.av.big{width:64px;height:64px;font-size:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.tile{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.tile .ico{width:30px;height:30px;margin-bottom:6px}
+.tile small{font-size:12.5px;color:var(--muted)}
+.tile b{font-family:var(--f-display);font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile em{font-style:normal;font-size:12px;color:var(--muted)}
+.tl{display:grid;grid-template-columns:76px minmax(0,1fr) minmax(0,1fr);gap:4px 16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+.tl:last-child{border-bottom:0}
+.tl .yr{font-family:var(--f-display);font-weight:800;font-size:22px}
+.tl small{display:block;font-size:11.5px;color:var(--muted)}
+.tl .lnk{font-weight:600}
+.lead-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line-2)}
+.lead-row:last-child{border-bottom:0}
+.lead-row .rk{width:20px;color:var(--muted);font-weight:600}
+.lead-row .n{margin-left:auto;display:flex;align-items:center;gap:4px;font-family:var(--f-display);font-weight:800;font-size:18px;color:var(--sun-ink)}
+.lead-row .n svg{width:15px;height:15px}
+.rec{padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.rec small{display:block;font-size:12.5px;color:var(--muted)}
+.rec b{display:block;font-family:var(--f-display);font-size:26px;font-weight:800;line-height:1.1}
+.rec .lnk{font-weight:600}
+.phase-note{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--violet);background:var(--violet-soft);border-radius:6px;padding:3px 8px;margin-bottom:8px}
+.morei{display:flex;align-items:center;gap:12px;width:100%;padding:14px 4px;border:0;border-bottom:1px solid var(--line-2);background:none;text-align:left;font-weight:600;font-size:15px;color:var(--fg)}
+.morei:last-child{border-bottom:0}
+.morei svg{color:var(--accent);width:20px;height:20px}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);padding:22px}
+  .hero h1{font-size:28px}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .nav-extra{display:none!important}
+  .navmore{display:flex}
+  .navmore.on{color:var(--accent)}
+  .ptg{display:none}
+  .rankt,.rankt tbody{display:block}
+  .rankt thead{display:none}
+  .rankt tr{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-2)}
+  .rankt tr:last-child{border-bottom:0}
+  .rankt td{padding:0;border:0}
+  .rankt td.place{width:auto}
+  .rankt td:nth-child(3){grid-column:2/-1;grid-row:2}
+  .tl{grid-template-columns:56px minmax(0,1fr)}
+  .tl>div:nth-child(3){grid-column:2}
+}
+@media (max-width:480px){.mini-rank{grid-template-columns:minmax(0,1fr)}}
 .ls{display:none}
 @media (max-width:900px){
   .lf{display:none}.ls{display:inline}
@@ -380,114 +475,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 }
 @media (max-width:420px){.roles button i{display:none}.ptag{display:none}}
 @keyframes sheet{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
-
-/* ===== Broadcast theme overrides ===== */
-.pbar{background:#05070D}
-:root[data-theme="dark"] .pbar{background:#000}
-.hdr{background:var(--board);color:var(--board-fg)}
-.hdr-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:8px 28px;flex-wrap:wrap;min-height:64px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
-.bbrand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.03em;white-space:nowrap}
-.bbrand small{display:block;font-family:var(--f-ui);font-weight:500;font-size:11px;letter-spacing:.08em;color:var(--board-muted);line-height:1}
-.nav{display:flex;flex-direction:row;gap:22px;flex:1;min-width:0;overflow-x:auto}
-.navi{background:transparent!important;color:var(--board-muted);border-radius:0;padding:21px 0 18px;border-bottom:3px solid transparent;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.05em;text-transform:uppercase;gap:8px}
-.navi svg{display:none}
-.navi:hover{color:var(--board-fg)}
-.navi[aria-current="page"]{color:var(--board-fg);border-bottom-color:var(--cyan)}
-.navi .badge{background:var(--accent);color:var(--on-accent)}
-.who{display:flex;align-items:center;gap:10px;white-space:nowrap}
-.who .t b{display:block;font-weight:600;font-size:14px;line-height:1.2}
-.who .t small{font-size:12px;color:var(--board-muted)}
-.who .av.blue{background:var(--cyan);color:var(--board)}
-.who .av.teal{background:#3CC2B2;color:var(--board)}
-.who .av.violet{background:#A390F0;color:var(--board)}
-.who .av.gray{background:var(--board-2);color:var(--board-muted)}
-.who .whobtn{width:auto}
-main{max-width:1180px;margin:0 auto;padding-block:24px 72px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
-
-/* hero band */
-.head{background:var(--board);color:var(--board-fg);border-radius:16px;padding:26px 28px;margin-bottom:20px;align-items:flex-end}
-h1.page{font-family:var(--f-display);font-weight:800;font-size:46px;line-height:.98;letter-spacing:0;text-transform:uppercase}
-.head .sub{color:var(--board-muted)}
-.head .eyebrow,.eyebrow{font-family:var(--f-display);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px}
-.head .eyebrow{color:var(--cyan)}
-.head .seg{background:var(--board-2)}
-.head .seg button{color:var(--board-muted)}
-.head .seg button[aria-pressed="true"]{background:var(--board-fg);color:var(--board)}
-.head .btn.ghost{background:transparent;color:var(--board-fg);border-color:var(--board-3)}
-.head .btn.ghost:hover{background:var(--board-2)}
-.head .progress{background:var(--board-2)}
-.head .progress i{background:var(--cyan)}
-.head .tag{background:var(--board-2);color:var(--cyan)}
-.head .tag.finals{background:var(--sun);color:#1E1600}
-.head .chip.good{background:rgba(67,193,129,.18);color:#6EE0A8}
-
-/* type & controls */
-h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.03em;text-transform:uppercase}
-.btn{font-family:var(--f-display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:15px;border-radius:8px}
-.btn.sm{font-size:13.5px}
-.btn.ghost{border-width:2px;border-color:var(--fg)}
-.btn.ghost:hover{background:var(--surface-2)}
-.btn.quiet{color:var(--info)}
-.btn.quiet:hover{background:var(--info-soft)}
-.btn.danger{border-width:2px;border-color:var(--bad)}
-.chip.info{background:var(--info-soft);color:var(--info)}
-.tag{font-family:var(--f-display);font-size:12.5px;letter-spacing:.08em;background:var(--info-soft);color:var(--info)}
-.tbl th{font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12.5px}
-.panel-h,.band{font-family:var(--f-display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:15px}
-.panel-h span,.band span{font-family:var(--f-ui);text-transform:none;letter-spacing:0;font-weight:400}
-.card,.stats,.tcard{border-radius:14px}
-.roleline{border-style:dashed}
-.place{font-size:22px}
-.team b,.trow h3{font-weight:700}
-
-/* tournament cards */
-.tcard{padding:0;overflow:hidden;gap:0}
-.tcard .tc-top{background:var(--board);color:var(--board-fg);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-.tcard .tc-top .tag{background:var(--board-2);color:var(--cyan)}
-.tcard .tc-top .tag.finals{background:var(--sun);color:#1E1600}
-.tcard .tc-top .coef{color:var(--board-muted)}
-.tcard .tc-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
-.tcard h3{font-family:var(--f-display);font-weight:800;font-size:24px;text-transform:uppercase;letter-spacing:.01em;margin:0}
-.tcard:hover{border-color:var(--accent)}
-
-/* date blocks & stats */
-.datebox{background:var(--board);color:var(--board-fg);border-radius:10px}
-.datebox span{color:var(--cyan)}
-.datebox.finals{background:var(--sun);color:#1E1600}
-.datebox.finals span{color:#5A3F00}
-.trow h3{font-family:var(--f-display);font-size:21px;text-transform:uppercase;letter-spacing:.01em}
-.trow h3 .tag{vertical-align:middle}
-.stat b{font-family:var(--f-display);font-weight:800;font-size:34px;letter-spacing:0}
-.callout{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
-.callout .av.blue{color:var(--accent-ink)}
-.step.now{border-color:var(--accent);color:var(--accent-ink)}
-
-/* scores */
-.when b{font-size:24px;font-weight:800}
-.bm-sets{font-size:16px;font-weight:600;gap:8px}
-.bm-tot{font-size:22px}
-.sgrid input{font-family:var(--f-display);font-size:26px;font-weight:800;min-height:54px}
-.sgrid input.w{background:var(--cyan);color:var(--board);border-color:var(--cyan)}
-.sgrid .h{font-family:var(--f-display);font-weight:700;letter-spacing:.1em}
-.final .big{font-size:52px}
-.mhead h2{font-family:var(--f-display);font-weight:800;font-size:26px;text-transform:uppercase;letter-spacing:.01em}
-.wsteps div{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase;font-size:12.5px}
-
-@media (max-width:900px){
-  .hdr-in{min-height:58px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .bbrand{margin-right:auto;font-size:19px;min-width:0}
-  .hdr-in{flex-wrap:nowrap}
-  .who .av.gray{display:none}
-  .who .t{display:none}
-  main{padding-block:16px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;overflow:visible;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));background:var(--board);border-top:1px solid var(--board-2)}
-  .nav.single{display:none}
-  .navi{flex-direction:column;gap:3px;padding:6px 2px;border-bottom:0;border-top:3px solid transparent;font-size:11.5px;letter-spacing:.04em;min-height:52px;justify-content:center;text-align:center;position:relative}
-  .navi svg{display:block;width:22px;height:22px;color:inherit}
-  .navi[aria-current="page"]{color:var(--cyan);border-top-color:var(--cyan)}
-  .head{padding:20px 18px;border-radius:14px}
-  h1.page{font-size:34px}
-}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -496,13 +483,18 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacin
 
 
 <div class="pbar"><div class="pbar-in"><span class="ptag">Προεπισκόπηση</span><span class="plabel">Δες την εφαρμογή ως</span><div class="roles" id="roles"></div></div></div>
-<header class="hdr"><div class="hdr-in">
-  <div class="bbrand"><svg width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12" fill="#FF6A2B"/><path d="M3 10c6 1 12 5 15 16M10 2.5c-1 7 3 14 16 16" fill="none" stroke="#0A1A3A" stroke-width="2"/></svg><div>BEACH VOLLEY HUB<small>ΠΑΝΕΛΛΗΝΙΟ ΠΡΩΤΑΘΛΗΜΑ</small></div></div>
-  <nav class="nav" id="tabs" aria-label="Ενότητες"></nav>
-  <div class="who" id="who"></div>
-  <span id="crumb" hidden></span>
-</div></header>
-<main id="app"></main>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#F5B400"/><path d="M1.6 5.5c3.4.4 6.6 2.8 8 9.4M5 1.3c-.4 3.6 1.6 7 8.8 8" fill="none" stroke="#0B1A3A" stroke-width="1.3"/></svg></div><div><b>Beach Volley Hub</b><small>Πανελλήνιο Πρωτάθλημα</small></div></div>
+    <nav class="nav" id="tabs" aria-label="Ενότητες"></nav>
+    <div class="whocard" id="who"></div>
+  </aside>
+  <div class="content">
+    <div class="topbar"><div class="crumb" id="crumb"></div>
+      <label class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Αναζήτηση τουρνουά ή αθλητή" aria-label="Αναζήτηση"><span class="kbd">⌘K</span></label></div>
+    <main id="app"></main>
+  </div>
+</div>
 <div id="modal-root"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -615,18 +607,20 @@ const TAKEN={t27a:new Set(['M0','M1','M4','M5','M20']),t27b:new Set(['M0','M3'])
 
 
 /* ---------- state ---------- */
-const S={role:'visitor',tab:{visitor:'results',athlete:'tournaments',tadmin:'schedule',super:'overview'},
-  season:2026,openT:null,resG:'M',schedF:'all',schedG:'all',listG:'M',wc:{M:new Set(),W:new Set()},pub:{M:null,W:null},
+const S={role:'visitor',tab:{visitor:'home',athlete:'tournaments',tadmin:'schedule',super:'overview'},
+  season:2026,openT:null,openA:null,q:{rank:'',ath:''},rankG:'M',rankS:2026,athG:'all',resG:'M',schedF:'all',schedG:'all',listG:'M',wc:{M:new Set(),W:new Set()},pub:{M:null,W:null},
   regs:[],invites:[{id:'i1',t:'t27b',from:'M9',status:'pending'}],modal:null};
 
 const ROLES=[{id:'visitor',label:'Επισκέπτης',sh:'Επισκέπτης',c:'#A9B6D3'},{id:'athlete',label:'Αθλητής',sh:'Αθλητής',c:'#5B8DEF'},{id:'tadmin',label:'Admin τουρνουά',sh:'Admin',c:'#3CC2B2'},{id:'super',label:'Super admin',sh:'Super',c:'#A390F0'}];
 const TABS={
-  visitor:[['results','Αποτελέσματα']],
+  visitor:[['home','Αρχική'],['calendar','Τουρνουά 2027'],['results','Αποτελέσματα'],['ranking','Βαθμολογία'],['athletes','Αθλητές'],['pantheon','Πάνθεον']],
   athlete:[['tournaments','Τουρνουά 2027'],['mine','Οι δηλώσεις μου'],['results','Αποτελέσματα']],
   tadmin:[['schedule','Αγώνες & σκορ'],['results','Αποτελέσματα']],
   super:[['overview','Επισκόπηση'],['tournaments','Τουρνουά'],['lists','Λίστες συμμετοχής'],['schedule','Αγώνες & σκορ'],['users','Χρήστες & ρόλοι'],['results','Αποτελέσματα']],
 };
-const SHORT={overview:'Αρχική',tournaments:'Τουρνουά',lists:'Λίστες',schedule:'Σκορ',users:'Χρήστες',mine:'Δηλώσεις',results:'Αποτελέσματα'};
+const SHORT={overview:'Αρχική',tournaments:'Τουρνουά',lists:'Λίστες',schedule:'Σκορ',users:'Χρήστες',mine:'Δηλώσεις',results:'Αποτελέσματα',home:'Αρχική',calendar:'Τουρνουά',ranking:'Βαθμολογία',athletes:'Αθλητές',pantheon:'Πάνθεον'};
+/* Public sections that belong to a later phase: shown with a small tag so new features slot in without layout changes */
+const PHASE={athletes:3,pantheon:3};
 const IC=p=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const ICON={
   results:IC('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'),
@@ -636,6 +630,12 @@ const ICON={
   overview:IC('<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>'),
   lists:IC('<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'),
   users:IC('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="m9 12 2 2 4-4"/>'),
+  home:IC('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
+  calendar:IC('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h3M8 17h6"/>'),
+  ranking:IC('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  athletes:IC('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+  pantheon:IC('<path d="M3 21h18M5 21V10M10 21V10M14 21V10M19 21V10M2 10h20L12 3z"/>'),
+  more:IC('<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'),
   trophy:IC('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/>'),
   plus:IC('<path d="M12 5v14M5 12h14"/>'),
   check:IC('<path d="M20 6 9 17l-5-5"/>'),
@@ -645,7 +645,7 @@ const ICON={
   alert:IC('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>'),
 };
 const ROLELINE={
-  visitor:['#8D93A0','<strong>Επισκέπτης χωρίς σύνδεση.</strong> Βλέπει μόνο τα αποτελέσματα των τουρνουά που ολοκληρώθηκαν, ανά σεζόν.'],
+  visitor:['#8D93A0','<strong>Επισκέπτης χωρίς σύνδεση.</strong> Βλέπει το πρόγραμμα, τα αποτελέσματα, τη βαθμολογία, τους αθλητές και το Πάνθεον. Για δήλωση συμμετοχής χρειάζεται σύνδεση.'],
   athlete:['var(--accent)','<strong>Συνδεδεμένος αθλητής.</strong> Βλέπει τα τουρνουά της χρονιάς, δηλώνει συμμετοχή με συμπαίκτη και απαντά σε προσκλήσεις.'],
   tadmin:['var(--teal)','<strong>Admin τουρνουά.</strong> Έχει πρόσβαση μόνο στο τουρνουά που του ανατέθηκε και καταχωρεί τα σκορ.'],
   super:['var(--violet)','<strong>Super admin.</strong> Δημιουργεί τουρνουά και admins, εγκρίνει λίστες και wild cards, επαληθεύει αθλητές.'],
@@ -660,16 +660,20 @@ function renderShell(){
     tadmin:`<div class="av teal">ΑΚ</div><div class="t"><b>Αλέξης Κωνσταντίνου</b><small>Admin · Masters Θεσ/νίκης</small></div>`,
     super:`<div class="av violet">ΓΠ</div><div class="t"><b>Γραμματεία</b><small>Super admin</small></div>`}[S.role];
   const pend=S.invites.filter(i=>i.status==='pending').length;
-  $('#tabs').classList.toggle('single',TABS[S.role].length<2);
-  $('#tabs').innerHTML=TABS[S.role].map(([id,l])=>`<button class="navi" data-act="tab" data-id="${id}" ${S.tab[S.role]===id?'aria-current="page"':''}>${ICON[id]}<span class="lf">${l}</span><span class="ls">${S.role==='super'&&id==='results'?'Ιστορικό':SHORT[id]}</span>${id==='mine'&&pend?`<span class="badge">${pend}</span>`:''}${id==='users'&&CLAIMS.length?`<span class="badge">${CLAIMS.length}</span>`:''}</button>`).join('');
-  const cur=TABS[S.role].find(t=>t[0]===S.tab[S.role]);
-  $('#crumb').innerHTML=`Σεζόν ${S.tab[S.role]==='results'?S.season:2027}<i>/</i><b>${cur?cur[1]:''}</b>`;
+  const tabs=TABS[S.role],cur=S.tab[S.role],MAXM=5,over=tabs.length>MAXM;
+  const badge=id=>id==='mine'&&pend?`<span class="badge">${pend}</span>`:id==='users'&&CLAIMS.length?`<span class="badge">${CLAIMS.length}</span>`:'';
+  const nav=$('#tabs');nav.classList.toggle('single',tabs.length<2);
+  nav.innerHTML=tabs.map(([id,l],i)=>`<button class="navi${over&&i>=MAXM-1?' nav-extra':''}" data-act="tab" data-id="${id}" ${cur===id&&!S.openA?'aria-current="page"':''}>${ICON[id]}<span class="lf">${l}</span><span class="ls">${S.role==='super'&&id==='results'?'Ιστορικό':SHORT[id]}</span>${PHASE[id]?`<span class="ptg">Φάση ${PHASE[id]}</span>`:''}${badge(id)}</button>`).join('')
+    +(over?`<button class="navi navmore${tabs.slice(MAXM-1).some(t=>t[0]===cur)||S.openA?' on':''}" data-act="more">${ICON.more}<span class="ls">Περισσότερα</span></button>`:'');
+  const c=tabs.find(t=>t[0]===cur);
+  $('#crumb').innerHTML=S.openA?`Αθλητές<i>/</i><b>${esc(ATH[S.openA].name)}</b>`:`Σεζόν ${cur==='results'?S.season:cur==='ranking'?S.rankS:2027}<i>/</i><b>${c?c[1]:''}</b>`;
 }
 function render(){
   document.documentElement.lang='el';
   renderShell();
-  const tab=S.tab[S.role];
-  const v={results:vResults,tournaments:S.role==='super'?vTournamentsAdmin:vTournamentsAthlete,mine:vMine,schedule:vSchedule,overview:vOverview,lists:vLists,users:vUsers}[tab];
+  const V={results:vResults,tournaments:S.role==='super'?vTournamentsAdmin:vTournamentsAthlete,mine:vMine,schedule:vSchedule,overview:vOverview,lists:vLists,users:vUsers,
+    home:vHome,calendar:vCalendar,ranking:vRanking,athletes:vAthletes,pantheon:vPantheon};
+  const v=S.openA?vProfile:V[S.tab[S.role]];
   const rl=ROLELINE[S.role];
   $('#app').innerHTML=`<div class="roleline"><span class="dot" style="background:${rl[0]}"></span><div>${rl[1]}</div></div>`+v();
 }
@@ -680,11 +684,14 @@ function vResults(){
   const seasons=[...new Set(PAST.map(t=>t.season))];
   return `<div class="head"><div><h1 class="page">Αποτελέσματα</h1><p class="sub">Τελικές κατατάξεις και αγώνες τελικής φάσης κάθε τουρνουά.</p></div>
     <div class="seg" role="group" aria-label="Σεζόν">${seasons.map(s=>`<button data-act="season" data-id="${s}" aria-pressed="${S.season===s}">Σεζόν ${s}</button>`).join('')}</div></div>
-    <div class="grid">${PAST.filter(t=>t.season===S.season).map(t=>{const m=results(t,'M').stand[0].team,w=results(t,'W').stand[0].team;
-      return `<button class="tcard" data-act="openT" data-id="${t.id}">
-        <div class="tc-top"><span class="tag ${t.type==='Finals'?'finals':''}">${t.type}</span><span class="coef">×${t.coef}</span></div><div class="tc-body">
-        <h3>${t.name}</h3><div class="meta">${drange(t.start,t.end)} · ${t.venue}</div>
-        <div class="winners"><div>${ICON.trophy}<span>Άνδρες</span><b>${tl(m)}</b></div><div>${ICON.trophy}<span>Γυναίκες</span><b>${tl(w)}</b></div></div></div></button>`;}).join('')}</div>`;
+    <div class="grid">${PAST.filter(t=>t.season===S.season).map(resultCard).join('')}</div>`;
+}
+function resultCard(t){
+  const m=results(t,'M').stand[0].team,w=results(t,'W').stand[0].team;
+  return `<button class="tcard" data-act="goT" data-id="${t.id}">
+    <div class="row" style="justify-content:space-between"><span class="tag ${t.type==='Finals'?'finals':''}">${t.type}</span><span class="coef">×${t.coef}</span></div>
+    <h3>${t.name}</h3><div class="meta">${drange(t.start,t.end)} · ${t.venue}</div>
+    <div class="winners"><div>${ICON.trophy}<span>Άνδρες</span><b>${tl(m)}</b></div><div>${ICON.trophy}<span>Γυναίκες</span><b>${tl(w)}</b></div></div></button>`;
 }
 function medal(p){return p===1?'<span class="medal g">1</span>':p===2?'<span class="medal s">2</span>':p===3?'<span class="medal b">3</span>':p;}
 function vResultDetail(t){
@@ -695,7 +702,7 @@ function vResultDetail(t){
      <div class="seg" role="group" aria-label="Κατηγορία">${gBtns(S.resG,'resG')}</div></div>
    <div class="two">
      <div class="card"><div class="panel-h">Τελική κατάταξη <span>Βαθμοί ανά αθλητή</span></div><div class="tscroll"><table class="tbl"><thead><tr><th>Θέση</th><th>Ομάδα</th><th class="r">Βαθμοί</th></tr></thead><tbody>
-       ${R.stand.map(s=>`<tr><td class="place">${medal(s.place)}${PLR[s.place]?`<small>${PLR[s.place]}</small>`:''}</td><td class="team"><b>${s.team.a.last} / ${s.team.b.last}</b><small>${s.team.a.name} · ${s.team.b.name}</small></td><td class="r num">${fmt(s.pts)}</td></tr>`).join('')}
+       ${R.stand.map(s=>`<tr><td class="place">${medal(s.place)}${PLR[s.place]?`<small>${PLR[s.place]}</small>`:''}</td><td class="team"><b>${s.team.a.last} / ${s.team.b.last}</b><small>${lnk(s.team.a,true)} · ${lnk(s.team.b,true)}</small></td><td class="r num">${fmt(s.pts)}</td></tr>`).join('')}
      </tbody></table></div></div>
      <div class="board"><div class="board-h">Τελική φάση <span>Σετ</span></div>${R.matches.map(m=>boardMatch(m,m.lbl)).join('')}</div>
    </div>`;
@@ -708,6 +715,137 @@ function boardRows(m){
     <div class="bm-row ${A?'':'win'}"><span class="bm-tn">${tl(m.b)}</span><span class="bm-sets">${sp(1)}</span><span class="bm-tot">${bw}</span></div>`;
 }
 function boardMatch(m,lbl){return `<div class="bm"><div class="bm-lbl">${lbl}</div>${boardRows(m)}</div>`;}
+
+/* ---------- public area: data helpers ---------- */
+const lnk=(a,full)=>`<button class="lnk" data-act="openA" data-id="${a.id}">${full?esc(a.name):esc(a.first[0]+'. '+a.last)}</button>`;
+const SHORTT={th:'Θεσ/νίκη',io:'Ίος',ma:'Μαραθώνας',fi:'Finals'};
+const HIST=[2018,2019,2020,2021,2022,2023,2024].map(y=>{const r=rng(y*7919);return {season:y,M:TEAMS.M[Math.floor(r()*6)],W:TEAMS.W[Math.floor(r()*6)]};});
+let STATS=null;
+function stats(){
+  if(STATS)return STATS;
+  const st={},get=id=>st[id]||(st[id]={res:[],titles:0,pods:0,w:0,l:0,fin:0,finYears:[]});
+  PAST.forEach(t=>['M','W'].forEach(g=>{const R=results(t,g);
+    R.stand.forEach(x=>[[x.team.a,x.team.b],[x.team.b,x.team.a]].forEach(([a,p])=>{const o=get(a.id);o.res.push({t,place:x.place,pts:x.pts,partner:p});
+      if(x.place===1){o.titles++;if(t.type==='Finals'){o.fin++;o.finYears.push(t.season);}}if(x.place<=3)o.pods++;}));
+    R.matches.forEach(m=>{const aw=m.sets.filter(z=>z[0]>z[1]).length*2>m.sets.length;[[m.a,aw],[m.b,!aw]].forEach(([tm,won])=>[tm.a,tm.b].forEach(a=>{won?get(a.id).w++:get(a.id).l++;}));});
+  }));
+  HIST.forEach(h=>['M','W'].forEach(g=>[h[g].a,h[g].b].forEach(a=>{const o=get(a.id);o.titles++;o.fin++;o.finYears.push(h.season);})));
+  return STATS=st;
+}
+const RANKC={};
+function ranking(season,g){
+  const k=season+g;if(RANKC[k])return RANKC[k];const st=stats();
+  const arr=(g==='M'?MEN:WOMEN).map(a=>{const rs=((st[a.id]||{res:[]}).res).filter(r=>r.t.season===season).sort((x,y)=>y.pts-x.pts);const best=rs.slice(0,3);
+    return {a,total:best.reduce((n,r)=>n+r.pts,0),best,played:rs.length};}).sort((x,y)=>y.total-x.total||x.a.last.localeCompare(y.a.last,'el'));
+  let rk=0,prev=null;arr.forEach((r,i)=>{if(r.total!==prev){rk=i+1;prev=r.total;}r.rank=rk;});
+  return RANKC[k]=arr;
+}
+function rankOf(a){return ranking(2026,a.g).find(r=>r.a.id===a.id);}
+function titleLeaders(g){const st=stats();return Object.values(ATH).filter(a=>g==='all'||a.g===g).map(a=>({a,n:(st[a.id]||{titles:0}).titles})).filter(x=>x.n>0).sort((x,y)=>y.n-x.n||x.a.last.localeCompare(y.a.last,'el'));}
+function champions(){
+  const recent=PAST.filter(t=>t.type==='Finals').map(t=>({season:t.season,M:results(t,'M').stand[0].team,W:results(t,'W').stand[0].team,real:true}));
+  return [...recent,...HIST].sort((x,y)=>y.season-x.season);
+}
+const phaseNote=n=>`<span class="phase-note">${ICON.star} Προαιρετική λειτουργία · Φάση ${n}</span>`;
+
+/* ---------- public area: pages ---------- */
+function vHome(){
+  const nx=UPC.find(t=>pd(t.end)>=NOW)||UPC[0],days=Math.max(0,Math.ceil((pd(nx.start)-NOW)/864e5)),st=regStatus(nx);
+  const fin=PAST.find(t=>t.id==='fi26'),cm=results(fin,'M').stand[0].team,cw=results(fin,'W').stand[0].team;
+  const rm=ranking(2026,'M').slice(0,3),rw=ranking(2026,'W').slice(0,3),lead=titleLeaders('all')[0];
+  return `<section class="hero"><div class="court" aria-hidden="true"></div>
+     <div class="hero-main"><div class="eyebrow-l">Σεζόν 2027</div><h1>Πανελλήνιο Πρωτάθλημα Beach Volley</h1>
+       <p>${UPC.length} τουρνουά, ${MEN.length+WOMEN.length} αθλητές και νέο σύστημα βαθμολογίας με τα 3 καλύτερα αποτελέσματα κάθε αθλητή.</p>
+       <div class="row"><button class="btn" data-act="tab" data-id="calendar">Πρόγραμμα 2027</button><button class="btn hero-ghost" data-act="login">Σύνδεση για δήλωση</button></div></div>
+     <div class="next"><div class="lbl">Επόμενο τουρνουά</div><b>${esc(nx.name)}</b><span class="meta">${drange(nx.start,nx.end)} · ${esc(nx.venue.split(',')[0])}</span>
+       <div class="count"><strong>${days}</strong>μέρες</div>
+       ${st==='open'?`<span class="chip good">Δηλώσεις έως ${dtime(nx.regClose)}</span>`:`<span class="chip">Δηλώσεις από ${dtime(nx.regOpen)}</span>`}</div></section>
+   <div class="grid2">
+     <div class="card"><div class="panel-h">Πρωταθλητές Finals 2026 <button class="lnk" data-act="tab" data-id="pantheon">Πάνθεον →</button></div>
+       ${[['Άνδρες',cm],['Γυναίκες',cw]].map(([l,tm])=>`<div class="champ"><span class="ico sun">${ICON.trophy}</span><div><small>${l}</small>${lnk(tm.a,true)} / ${lnk(tm.b,true)}</div></div>`).join('')}</div>
+     <div class="card"><div class="panel-h">Κορυφή βαθμολογίας 2026 <button class="lnk" data-act="tab" data-id="ranking">Όλη η βαθμολογία →</button></div>
+       <div class="mini-rank">${[['Άνδρες',rm],['Γυναίκες',rw]].map(([l,arr])=>`<div><small>${l}</small>${arr.map(r=>`<div class="mr"><span class="medal ${['g','s','b'][r.rank-1]||'s'}">${r.rank}</span>${lnk(r.a,true)}<b class="num">${fmt(r.total)}</b></div>`).join('')}</div>`).join('')}</div></div>
+   </div>
+   <h2 class="sec">Πρόσφατα αποτελέσματα <span class="count">Σεζόν 2026</span></h2>
+   <div class="grid">${PAST.filter(t=>t.season===2026).slice().reverse().map(resultCard).join('')}</div>
+   ${lead?`<button class="pan-banner" data-act="tab" data-id="pantheon"><span class="ico sun">${ICON.pantheon}</span><span class="txt"><b>Πάνθεον</b>${esc(lead.a.name)} έχει τους περισσότερους τίτλους: ${lead.n}. Δες πρωταθλητές ανά χρονιά και ρεκόρ.</span><span class="arr">→</span></button>`:''}`;
+}
+function vCalendar(){
+  return `<div class="head"><div><h1 class="page">Πρόγραμμα 2027</h1><p class="sub">Οι δηλώσεις γίνονται από τους αθλητές μέσα στην εφαρμογή, μαζί με τον συμπαίκτη τους.</p></div><button class="btn" data-act="login">Σύνδεση για δήλωση</button></div>
+   <div class="card">${UPC.map(t=>{const st=regStatus(t),d=pd(t.start);
+     const act=st==='open'?`<span class="chip good">Ανοιχτές δηλώσεις</span><span class="muted" style="font-size:13px">έως ${dtime(t.regClose)}</span>`:st==='soon'?`<span class="chip">Ανοίγουν ${dtime(t.regOpen)}</span>`:`<span class="chip warn">Έκλεισαν</span>`;
+     return `<div class="trow"><div class="datebox ${t.type==='Finals'?'finals':''}"><b>${d.getDate()}</b><span>${MS[d.getMonth()]}</span></div>
+       <div style="min-width:0"><h3>${esc(t.name)} <span class="tag ${t.type==='Finals'?'finals':''}" style="margin-left:4px">${t.type} ×${t.coef}</span></h3>
+       <div class="meta">${drange(t.start,t.end)} · ${esc(t.venue)}</div><div class="meta">${t.cats.map(c=>c==='M'?'Ανδρών':'Γυναικών').join(' & ')} · ${t.minAge}+ · κύριο ταμπλό ${t.main} ομάδες</div></div>
+       <div class="act">${act}</div></div>`;}).join('')}</div>`;
+}
+function rankRows(){
+  const q=S.q.rank.trim().toLowerCase(),rows=ranking(S.rankS,S.rankG).filter(r=>!q||r.a.name.toLowerCase().includes(q));
+  return rows.map(r=>`<tr><td class="place">${r.rank<=3?medal(r.rank):r.rank}</td><td>${lnk(r.a,true)}<small class="muted" style="display:block;font-size:12px">${r.played} τουρνουά</small></td>
+    <td><div class="rc">${r.best.map(b=>`<span class="rchip" title="${esc(b.t.name)}">${SHORTT[b.t.id.slice(0,2)]} · ${b.place}η · <b>${b.pts}</b></span>`).join('')}</div></td><td class="r"><b class="num">${fmt(r.total)}</b></td></tr>`).join('')
+    ||`<tr><td colspan="4" class="muted">Κανένας αθλητής με αυτό το όνομα.</td></tr>`;
+}
+function vRanking(){
+  return `<div class="head"><div><h1 class="page">Βαθμολογία</h1><p class="sub">Άθροισμα των 3 καλύτερων αποτελεσμάτων κάθε αθλητή στη σεζόν.</p></div>
+     <div class="toolbar"><div class="seg" role="group" aria-label="Σεζόν">${[2026,2025].map(y=>`<button data-act="rankS" data-id="${y}" aria-pressed="${S.rankS===y}">${y}</button>`).join('')}</div>
+     <div class="seg" role="group" aria-label="Κατηγορία">${gBtns(S.rankG,'rankG')}</div></div></div>
+   <label class="searchbox">${ICON.athletes}<input data-pq="rank" value="${esc(S.q.rank)}" placeholder="Αναζήτηση αθλητή" aria-label="Αναζήτηση αθλητή"></label>
+   <div class="card tscroll"><table class="tbl rankt"><thead><tr><th>Θέση</th><th>Αθλητής</th><th>Αποτελέσματα που μετράνε</th><th class="r">Βαθμοί</th></tr></thead><tbody id="rank-list">${rankRows()}</tbody></table></div>`;
+}
+function athCards(){
+  const q=S.q.ath.trim().toLowerCase(),st=stats();
+  const list=[...MEN,...WOMEN].filter(a=>S.athG==='all'||a.g===S.athG).filter(a=>!q||a.name.toLowerCase().includes(q)).map(a=>({a,r:rankOf(a)})).sort((x,y)=>x.r.rank-y.r.rank||(x.a.g<y.a.g?-1:1));
+  return list.map(({a,r})=>{const t=(st[a.id]||{titles:0}).titles;
+    return `<button class="acard" data-act="openA" data-id="${a.id}"><span class="av ${a.g==='M'?'blue':'violet'}">${a.first[0]}${a.last[0]}</span>
+      <span class="t"><b>${esc(a.name)}</b><small>${a.g==='M'?'Άνδρες':'Γυναίκες'} · #${r.rank} · ${fmt(r.total)} βαθμοί</small></span>${t?`<span class="tchip">${ICON.trophy}${t}</span>`:''}</button>`;}).join('')
+    ||'<div class="card empty">Κανένας αθλητής με αυτό το όνομα.</div>';
+}
+function vAthletes(){
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Αθλητές</h1><p class="sub">Προφίλ, στατιστικά και ιστορικό κάθε αθλητή.</p></div>
+     <div class="seg" role="group" aria-label="Κατηγορία">${[['all','Όλοι'],['M','Άνδρες'],['W','Γυναίκες']].map(([k,l])=>`<button data-act="athG" data-id="${k}" aria-pressed="${S.athG===k}">${l}</button>`).join('')}</div></div>
+   <label class="searchbox">${ICON.athletes}<input data-pq="ath" value="${esc(S.q.ath)}" placeholder="Αναζήτηση αθλητή" aria-label="Αναζήτηση αθλητή"></label>
+   <div class="agrid" id="ath-list">${athCards()}</div>`;
+}
+function vProfile(){
+  const a=ATH[S.openA],s=stats()[a.id]||{res:[],titles:0,pods:0,w:0,l:0,fin:0,finYears:[]},R=rankOf(a);
+  const team=TEAMS[a.g].find(t=>t.a.id===a.id||t.b.id===a.id),partner=team?(team.a.id===a.id?team.b:team.a):null;
+  const hist=s.res.slice().sort((x,y)=>pd(y.t.start)-pd(x.t.start)),best=hist.length?Math.min(...hist.map(h=>h.place)):null,pct=s.w+s.l?Math.round(s.w*100/(s.w+s.l)):0;
+  const tile=(ic,c,l,v,sub)=>`<div class="card tile"><span class="ico ${c}">${ic}</span><small>${l}</small><b>${v}</b><em>${sub}</em></div>`;
+  return `<button class="btn quiet back" data-act="closeA">← Πίσω</button>
+   <div class="prof"><div class="av big ${a.g==='M'?'blue':'violet'}">${a.first[0]}${a.last[0]}</div>
+     <div style="min-width:0">${phaseNote(3)}<h1 class="page">${esc(a.name)}</h1><p class="sub">${a.g==='M'?'Άνδρες':'Γυναίκες'} · γ. ${a.born}${partner?` · συμπαίκτης: ${lnk(partner,true)}`:''}</p></div></div>
+   <div class="tiles">
+     ${tile(ICON.ranking,'blue','Βαθμοί 2026',fmt(R.total),`#${R.rank} στην κατάταξη`)}
+     ${tile(ICON.trophy,'sun','Τίτλοι',s.titles,s.fin?`${s.fin} Finals (${s.finYears.sort().join(', ')})`:'χωρίς τίτλο Finals')}
+     ${tile(ICON.star,'violet','Βάθρα',s.pods,`σε ${hist.length} τουρνουά`)}
+     ${tile(ICON.schedule,'teal','Νίκες τελικής φάσης',`${s.w}–${s.l}`,`${pct}% νίκες`)}
+     ${tile(ICON.calendar,'blue','Καλύτερη θέση',best?best+'η':'–',`2025–2026`)}
+   </div>
+   <div class="card tscroll"><div class="panel-h">Ιστορικό αποτελεσμάτων <span>Βαθμοί ανά αθλητή</span></div>
+   <table class="tbl stack" style="min-width:560px"><thead><tr><th>Τουρνουά</th><th>Συμπαίκτης</th><th>Θέση</th><th class="r">Βαθμοί</th></tr></thead><tbody>
+     ${hist.map(h=>`<tr><td><button class="lnk" data-act="goT" data-id="${h.t.id}"><b>${esc(h.t.name)} ${h.t.season}</b></button><small class="muted" style="display:block">${drange(h.t.start,h.t.end)}</small></td>
+       <td data-l="Συμπαίκτης">${lnk(h.partner,true)}</td><td data-l="Θέση" class="place">${medal(h.place)}${PLR[h.place]?`<small>${PLR[h.place]}</small>`:''}</td><td data-l="Βαθμοί" class="r num">${fmt(h.pts)}</td></tr>`).join('')}
+   </tbody></table></div>`;
+}
+function vPantheon(){
+  const st=stats(),all=Object.values(ATH);
+  const most=titleLeaders('all')[0],pod=all.map(a=>({a,n:(st[a.id]||{pods:0}).pods})).sort((x,y)=>y.n-x.n)[0];
+  const win=all.map(a=>{const o=st[a.id]||{w:0,l:0};return {a,n:o.w+o.l>=6?o.w/(o.w+o.l):0,w:o.w,l:o.l};}).sort((x,y)=>y.n-x.n)[0];
+  const leaders=g=>titleLeaders(g).slice(0,5).map((x,i)=>`<div class="lead-row"><span class="rk">${i+1}</span>${lnk(x.a,true)}<span class="n">${ICON.trophy}${x.n}</span></div>`).join('')||'<div class="empty">Χωρίς τίτλους ακόμα.</div>';
+  return `<div class="head"><div>${phaseNote(3)}<h1 class="page">Πάνθεον</h1><p class="sub">Πρωταθλητές, τίτλοι και ρεκόρ του θεσμού.</p></div></div>
+   <div class="kpis">
+     <div class="card rec"><span class="ico sun">${ICON.trophy}</span><div><small>Περισσότεροι τίτλοι</small><b>${most.n}</b>${lnk(most.a,true)}</div></div>
+     <div class="card rec"><span class="ico violet">${ICON.star}</span><div><small>Περισσότερα βάθρα</small><b>${pod.n}</b>${lnk(pod.a,true)}</div></div>
+     <div class="card rec"><span class="ico teal">${ICON.ranking}</span><div><small>Καλύτερο ποσοστό νικών</small><b>${Math.round(win.n*100)}%</b>${lnk(win.a,true)} <span class="muted" style="font-size:12px">(${win.w}–${win.l})</span></div></div>
+   </div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="card"><div class="panel-h">Περισσότεροι τίτλοι · Άνδρες</div>${leaders('M')}</div>
+     <div class="card"><div class="panel-h">Περισσότεροι τίτλοι · Γυναίκες</div>${leaders('W')}</div>
+   </div>
+   <h2 class="sec">Πρωταθλητές Finals ανά χρονιά</h2>
+   <div class="card">${champions().map(c=>`<div class="tl"><div class="yr">${c.season}</div>
+     <div><small>Άνδρες</small>${lnk(c.M.a,true)} / ${lnk(c.M.b,true)}</div><div><small>Γυναίκες</small>${lnk(c.W.a,true)} / ${lnk(c.W.b,true)}</div></div>`).join('')}</div>`;
+}
 
 /* ---------- athlete ---------- */
 function vTournamentsAthlete(){
@@ -916,10 +1054,11 @@ function renderModal(){
     foot=`<button class="btn ghost" data-act="close">Άκυρο</button><button class="btn" data-act="saveScore" id="saveScore" ${evalScore(m.sets).ok?'':'disabled'}>Αποθήκευση & δημοσίευση</button>`;}
   if(m.type==='wiz'){wide=true;head=[m.edit?'Επεξεργασία τουρνουά':'Νέο τουρνουά','Τρία σύντομα βήματα. Όλα αλλάζουν και αργότερα.'];body=wizBody();
     foot=`${m.step>1?'<button class="btn ghost" data-act="wback">← Πίσω</button>':'<button class="btn ghost" data-act="close">Άκυρο</button>'}<div class="row"><span class="err">${esc(m.err)}</span>${m.step<3?'<button class="btn" data-act="wnext">Συνέχεια →</button>':`<button class="btn" data-act="wsave">${m.edit?'Αποθήκευση αλλαγών':'Δημιουργία τουρνουά'}</button>`}</div>`;}
+  if(m.type==='more'){head=['Περισσότερα','Υπόλοιπες ενότητες'];body=`<div>${TABS[S.role].slice(4).map(([id,l])=>`<button class="morei" data-act="tab" data-id="${id}">${ICON[id]}${l}</button>`).join('')}</div>`;foot='';}
   const ws=m.type==='wiz'?`<div class="wsteps">${['1 · Βασικά','2 · Ημερομηνίες','3 · Συμμετοχή'].map((l,i)=>`<div class="${m.step===i+1?'on':m.step>i+1?'done':''}">${l}</div>`).join('')}</div>`:'';
   root.innerHTML=`<div class="overlay" data-act="overlay"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="mtitle">
     <div class="mhead"><div><h2 id="mtitle">${head[0]}</h2><p>${esc(head[1])}</p></div><button class="x" data-act="close" aria-label="Κλείσιμο">×</button></div>${ws}
-    <div class="mbody">${body}</div><div class="mfoot">${foot}</div></div></div>`;
+    <div class="mbody">${body}</div>${foot?`<div class="mfoot">${foot}</div>`:''}</div></div>`;
   const first=root.querySelector('.mbody input:not([type=checkbox])');if(first&&m.type!=='login')first.focus();
 }
 function closeModal(){S.modal=null;renderModal();}
@@ -930,8 +1069,8 @@ document.addEventListener('click',e=>{
   const a=el.dataset.act,id=el.dataset.id;
   if(a==='overlay'){if(e.target===el)closeModal();return;}
   switch(a){
-    case'role':S.role=id;S.openT=null;closeModal();render();window.scrollTo(0,0);break;
-    case'tab':S.tab[S.role]=id;S.openT=null;render();window.scrollTo(0,0);break;
+    case'role':S.role=id;S.openT=null;S.openA=null;closeModal();render();window.scrollTo(0,0);break;
+    case'tab':S.tab[S.role]=id;S.openT=null;S.openA=null;closeModal();render();window.scrollTo(0,0);break;
     case'season':S.season=+id;render();break;
     case'openT':S.openT=id;render();window.scrollTo(0,0);break;
     case'closeT':S.openT=null;render();break;
@@ -963,11 +1102,19 @@ document.addEventListener('click',e=>{
       if(S.modal.edit){UPC[UPC.findIndex(x=>x.id===S.modal.edit)]=d;toast('Οι αλλαγές αποθηκεύτηκαν.');}
       else{d.id='n'+Date.now();UPC.push(d);UPC.sort((a,b)=>pd(a.start)-pd(b.start));toast('Το τουρνουά δημιουργήθηκε. Οι δηλώσεις ανοίγουν '+dtime(d.regOpen)+'.');}
       closeModal();S.tab.super='tournaments';render();}break;
+    case'more':S.modal={type:'more'};renderModal();break;
+    case'openA':S.openA=id;closeModal();render();window.scrollTo(0,0);break;
+    case'closeA':S.openA=null;render();break;
+    case'goT':{const t=PAST.find(x=>x.id===id);S.openA=null;S.tab[S.role]='results';S.season=t.season;S.openT=id;render();window.scrollTo(0,0);}break;
+    case'rankS':S.rankS=+id;render();break;
+    case'athG':S.athG=id;render();break;
     case'close':closeModal();break;
   }
 });
 document.addEventListener('input',e=>{
-  const el=e.target,m=S.modal;if(!m)return;
+  const el=e.target,m=S.modal;
+  if(el.dataset.pq){S.q[el.dataset.pq]=el.value;const box=$('#'+el.dataset.pq+'-list');if(box)box.innerHTML=el.dataset.pq==='rank'?rankRows():athCards();return;}
+  if(!m)return;
   if(el.dataset.in==='q'){m.q=el.value;$('#plist').innerHTML=regList();}
   if(el.dataset.set){const[i,j]=el.dataset.set.split('').map(Number);m.sets[i][j]=el.value.replace(/\D/g,'').slice(0,2);if(el.value!==m.sets[i][j])el.value=m.sets[i][j];
     const ev=evalScore(m.sets),x=MATCHES.find(y=>y.id===m.id);$('#scoreres').innerHTML=finalHTML(ev,x);
